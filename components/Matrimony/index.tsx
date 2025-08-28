@@ -114,6 +114,9 @@ const Matrimony = () => {
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [connectProfile, setConnectProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [senderName, setSenderName] = useState("");
+  const [senderEmail, setSenderEmail] = useState("");
+  const [connectMessage, setConnectMessage] = useState("");
 
   // Load profiles from API
   const fetchProfiles = async () => {
@@ -202,11 +205,30 @@ const Matrimony = () => {
   };
 
   // Handle connect request
-  const handleConnectRequest = () => {
+  const handleConnectRequest = async () => {
     if (!connectProfile) return;
-    alert(`Connection request sent to ${connectProfile.name}! They will be notified and can respond to your request.`);
-    setShowConnectModal(false);
-    setConnectProfile(null);
+    try {
+      if (!senderName || !senderEmail) {
+        alert("Please enter your name and email");
+        return;
+      }
+      await axios.post(`http://localhost:4005/api/candidates/${connectProfile.id}/connect`, {
+        senderName:senderName,
+        senderEmail:senderEmail,
+        message: connectMessage,
+      });
+      alert(`Connection request sent to ${connectProfile.name}. You'll be notified when they respond.`);
+      setShowConnectModal(false);
+      setConnectProfile(null);
+      setSenderName("");
+      setSenderEmail("");
+      setConnectMessage("");
+    } catch (err) {
+      console.error(err);
+      const anyErr: any = err;
+      const apiMsg = anyErr?.response?.data?.error || anyErr?.response?.data?.details || anyErr?.message || "Failed to send request. Please try again later.";
+      alert(apiMsg);
+    }
   };
 
   // Pagination
@@ -657,6 +679,39 @@ const Matrimony = () => {
                   <p className="text-sm text-blue-800">
                     <strong>Note:</strong> Your contact details will be shared only after {connectProfile.name} accepts your connection request.
                   </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                    <input
+                      type="text"
+                      value={senderName}
+                      onChange={(e) => setSenderName(e.target.value)}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Your Email</label>
+                    <input
+                      type="email"
+                      value={senderEmail}
+                      onChange={(e) => setSenderEmail(e.target.value)}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Message (optional)</label>
+                    <textarea
+                      value={connectMessage}
+                      onChange={(e) => setConnectMessage(e.target.value)}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      rows={3}
+                      placeholder={`Say hello to ${connectProfile.name}...`}
+                    />
+                  </div>
                 </div>
 
                 <div className="flex gap-3">

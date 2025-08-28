@@ -9,7 +9,8 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
-import ToasterContext from "../context/ToastContext";
+import ToastProvider from "../context/ToastContext";
+import DonationButton from "@/components/DonationButton";
 
 export default function RootLayout({
   children,
@@ -24,12 +25,14 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="light"
         >
-          <Lines />
-          <Header />
-          <ToasterContext />
-          {children}
-          <Footer />
-          <ScrollToTop />
+          <ToastProvider>
+            <Lines />
+            <Header />
+            {children}
+            <Footer />
+            <ScrollToTop />
+            <DonationButton />
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>
