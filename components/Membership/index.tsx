@@ -1,7 +1,21 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import SectionHeader from "@/components/Common/SectionHeader";
+import MembershipPayment from "./payment_page";
 
 const Membership = () => {
+  const [showPayment, setShowPayment] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<{
+    id: number;
+    name: string;
+    price: string;
+    duration: string;
+    features: string[];
+    popular: boolean;
+    buttonText: string;
+    buttonColor: string;
+  } | null>(null);
+
   const membershipPlans = [
     {
       id: 1,
@@ -87,6 +101,42 @@ const Membership = () => {
     }
   ];
 
+  const handleJoinClick = (plan) => {
+    setSelectedPlan(plan);
+    setShowPayment(true);
+  };
+
+  const handlePlanSelect = (plan) => {
+    setSelectedPlan(plan);
+  };
+
+  const handleBackToMembership = () => {
+    setShowPayment(false);
+    setSelectedPlan(null);
+  };
+
+  // If payment page is active, show it instead of membership plans
+  if (showPayment) {
+    return (
+      <div className="bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="pt-20 pb-6">
+            <button
+              onClick={handleBackToMembership}
+              className="flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
+            >
+              <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Membership Plans
+            </button>
+          </div>
+          <MembershipPayment selectedPlan={selectedPlan} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <section id="membership" className="px-4 md:px-8 2xl:px-0">
@@ -131,9 +181,14 @@ const Membership = () => {
               {membershipPlans.map((plan) => (
                 <div
                   key={plan.id}
-                  className={`relative overflow-hidden rounded-lg bg-white shadow-lg ${
+                  className={`relative overflow-hidden rounded-lg bg-white shadow-lg transition-all duration-300 cursor-pointer ${
                     plan.popular ? "ring-2 ring-blue-500" : ""
+                  } ${
+                    selectedPlan?.id === plan.id 
+                      ? "ring-2 ring-blue-600 shadow-xl transform scale-105" 
+                      : "hover:ring-2 hover:ring-blue-200"
                   }`}
+                  onClick={() => handlePlanSelect(plan)}
                 >
                   {plan.popular && (
                     <div className="absolute left-0 right-0 top-0 bg-blue-500 py-2 text-center text-sm font-medium text-white">
@@ -166,7 +221,13 @@ const Membership = () => {
                       ))}
                     </ul>
                     
-                    <button className={`w-full rounded-lg px-6 py-3 font-medium text-white transition-colors duration-300 ${plan.buttonColor}`}>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleJoinClick(plan);
+                      }}
+                      className={`w-full rounded-lg px-6 py-3 font-medium text-white transition-colors duration-300 ${plan.buttonColor}`}
+                    >
                       {plan.buttonText}
                     </button>
                   </div>
@@ -175,78 +236,7 @@ const Membership = () => {
             </div>
           </div>
 
-          {/* Registration Form */}
-          <div className="mt-20 rounded-lg bg-gray-50 p-8">
-            <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">
-              Ready to Join?
-            </h2>
-            <div className="mx-auto max-w-2xl">
-              <form className="space-y-6">
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Enter your first name"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Enter your last name"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter your email"
-                  />
-                </div>
-                
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter your phone number"
-                  />
-                </div>
-                
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Membership Plan
-                  </label>
-                  <select className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Select a plan</option>
-                    <option>Basic Member (Free)</option>
-                    <option>Premium Member (₹500/year)</option>
-                    <option>Patron Member (₹1000/year)</option>
-                  </select>
-                </div>
-                
-                <div className="text-center">
-                  <button className="rounded-lg bg-green-600 px-8 py-3 font-medium text-white transition-colors duration-300 hover:bg-green-700">
-                    Submit Application
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+        
         </div>
       </section>
     </>
