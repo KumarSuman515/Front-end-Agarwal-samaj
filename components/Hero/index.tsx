@@ -21,21 +21,24 @@ const Hero = () => {
   useEffect(() => {
     const fetchSliders = async () => {
       try {
+        console.log("Fetching sliders from API...");
         setLoading(true);
         setError(null);
-        const response = await axios.get('http://localhost:4005/api/homePageSliderRoutes');
+              
+        const response = await axios.get('http://localhost:4005/api/sliders');
+        console.log("API Response:", response.data);
+        
         const data = response.data;
         
         if (data && data.length > 0) {
           setSliderImages(data);
         } else {
-          // No data from API - show empty state
           setSliderImages([]);
           setError("No slider images available");
         }
       } catch (err) {
-        console.error("Error fetching sliders:", err);
-        setError("Failed to load slider images");
+        console.error("API Error:", err.message);
+        setError(`Failed to load slider images: ${err.message}`);
         setSliderImages([]);
       } finally {
         setLoading(false);
