@@ -1,0 +1,48 @@
+<svg width="110" height="40" viewBox="0 0 110 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Optimized gradients for footer light mode -->
+  <defs>
+    <linearGradient id="footerMainGradientLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#654321;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B4513;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="footerGoldGradientLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#B8860B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DAA520;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="footerTextGradientLight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#654321;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#654321;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="20" cy="20" r="18" fill="url(#footerMainGradientLight)" stroke="url(#footerGoldGradientLight)" stroke-width="1.5"/>
+  <circle cx="20" cy="20" r="15" fill="none" stroke="#B8860B" stroke-width="0.5" opacity="0.6"/>
+  
+  <!-- Om symbol -->
+  <path d="M13 13 C13 10, 16 10, 19 10 C22 10, 25 10, 25 13 C25 16, 22 16, 19 16 C16 16, 13 16, 13 13 Z" fill="url(#footerGoldGradientLight)" stroke="#654321" stroke-width="0.5"/>
+  <path d="M19 16 L19 19 L22 19 L22 17 L19 17 Z" fill="url(#footerGoldGradientLight)" stroke="#654321" stroke-width="0.5"/>
+  
+  <!-- Text: Agarwal -->
+  <text x="45" y="18" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="url(#footerTextGradientLight)">
+    AGARWAL
+  </text>
+  
+  <!-- Text: Samaj -->
+  <text x="45" y="28" font-family="Arial, sans-serif" font-size="9" font-weight="600" fill="#8B4513">
+    SAMAJ
+  </text>
+  
+  <!-- Decorative line -->
+  <path d="M40 22 L100 22" stroke="#8B4513" stroke-width="1" opacity="0.7"/>
+  
+  <!-- Small decorative dots -->
+  <circle cx="95" cy="12" r="1.5" fill="#B8860B" opacity="0.8"/>
+  <circle cx="98" cy="16" r="1" fill="#8B4513" opacity="0.7"/>
+  <circle cx="95" cy="20" r="1" fill="#B8860B" opacity="0.8"/>
+  <circle cx="98" cy="24" r="1.5" fill="#8B4513" opacity="0.7"/>
+  <circle cx="95" cy="28" r="1" fill="#B8860B" opacity="0.8"/>
+</svg>

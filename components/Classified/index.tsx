@@ -5,160 +5,29 @@ import SectionHeader from "@/components/Common/SectionHeader";
 import CreateClassifiedModal from "./CreateClassifiedModal";
 import SavedClassifieds from "./SavedClassifieds";
 import ContactModal from "./ContactModal";
+import StatusCheckModal from "./StatusCheckModal";
+import AdvancedSearchModal from "./AdvancedSearchModal";
+import BusinessStats from "./BusinessStats";
 import { useToast } from "@/app/context/ToastContext";
 
 interface ClassifiedItem {
   id: number;
-  title: string;
-  category: string;
-  description: string;
-  contact: string;
-  email?: string;
-  location?: string;
-  price?: number;
-  featured: boolean;
-  status: string;
-  views: number;
-  postedBy: string;
-  postedByPhone: string;
-  expiresAt?: string;
-  createdAt: string;
-  updatedAt: string;
+  person_name: string;
+  firm_name: string;
+  firm_address: string;
+  phone: string;
+  email: string;
+  website?: string;
+  business_category: string;
+  photos?: string;
+  status: "pending" | "approved" | "disapproved";
+  approval_by?: number;
+  approval_date?: string;
+  created_at: string;
 }
 
-// Static sample data
-const staticClassifieds: ClassifiedItem[] = [
-  {
-    id: 1,
-    title: "Beautiful 3BHK Apartment for Rent",
-    category: "Real Estate",
-    description: "Spacious 3BHK apartment available for rent in prime location. Fully furnished with modern amenities, parking space, and 24/7 security. Perfect for families.",
-    contact: "+91 98765 43210",
-    email: "rental@example.com",
-    location: "Mumbai, Maharashtra",
-    price: 45000,
-    featured: true,
-    status: "active",
-    views: 156,
-    postedBy: "Rajesh Agarwal",
-    postedByPhone: "+91 98765 43210",
-    createdAt: "2024-01-15T10:30:00Z",
-    updatedAt: "2024-01-15T10:30:00Z"
-  },
-  {
-    id: 2,
-    title: "Software Developer Required",
-    category: "Jobs",
-    description: "Looking for experienced React/Node.js developer. 3+ years experience required. Competitive salary with benefits. Work from home option available.",
-    contact: "+91 87654 32109",
-    email: "hr@techcompany.com",
-    location: "Delhi, NCR",
-    price: 800000,
-    featured: false,
-    status: "active",
-    views: 89,
-    postedBy: "Priya Agarwal",
-    postedByPhone: "+91 87654 32109",
-    createdAt: "2024-01-14T14:20:00Z",
-    updatedAt: "2024-01-14T14:20:00Z"
-  },
-  {
-    id: 3,
-    title: "Maruti Swift VXI 2019 Model",
-    category: "Vehicles",
-    description: "Well maintained Maruti Swift VXI, single owner, 25,000 km driven. All service records available. Excellent condition, ready to drive.",
-    contact: "+91 76543 21098",
-    location: "Bangalore, Karnataka",
-    price: 650000,
-    featured: true,
-    status: "active",
-    views: 234,
-    postedBy: "Amit Agarwal",
-    postedByPhone: "+91 76543 21098",
-    createdAt: "2024-01-13T09:15:00Z",
-    updatedAt: "2024-01-13T09:15:00Z"
-  },
-  {
-    id: 4,
-    title: "Agarwal Samaj Annual Function",
-    category: "Events",
-    description: "Join us for the annual Agarwal Samaj function on 25th January 2024. Cultural programs, dinner, and networking opportunities. All members welcome.",
-    contact: "+91 65432 10987",
-    email: "events@agarwalsamaj.com",
-    location: "Pune, Maharashtra",
-    featured: false,
-    status: "active",
-    views: 445,
-    postedBy: "Suresh Agarwal",
-    postedByPhone: "+91 65432 10987",
-    createdAt: "2024-01-12T16:45:00Z",
-    updatedAt: "2024-01-12T16:45:00Z"
-  },
-  {
-    id: 5,
-    title: "Grocery Store for Sale",
-    category: "Business",
-    description: "Established grocery store in prime location with good customer base. Monthly turnover 5-6 lakhs. Reason for sale: relocation. Serious buyers only.",
-    contact: "+91 54321 09876",
-    location: "Chennai, Tamil Nadu",
-    price: 2500000,
-    featured: false,
-    status: "active",
-    views: 178,
-    postedBy: "Vikram Agarwal",
-    postedByPhone: "+91 54321 09876",
-    createdAt: "2024-01-11T11:30:00Z",
-    updatedAt: "2024-01-11T11:30:00Z"
-  },
-  {
-    id: 6,
-    title: "CA Coaching Classes",
-    category: "Education",
-    description: "Professional CA coaching by experienced faculty. Both online and offline batches available. Special discount for Agarwal community members.",
-    contact: "+91 43210 98765",
-    email: "ca@education.com",
-    location: "Hyderabad, Telangana",
-    price: 75000,
-    featured: true,
-    status: "active",
-    views: 123,
-    postedBy: "Neha Agarwal",
-    postedByPhone: "+91 43210 98765",
-    createdAt: "2024-01-10T13:20:00Z",
-    updatedAt: "2024-01-10T13:20:00Z"
-  },
-  {
-    id: 7,
-    title: "Wedding Catering Services",
-    category: "Business",
-    description: "Premium wedding catering services with traditional and modern menu options. Serving Agarwal community for 15+ years. Book early for best rates.",
-    contact: "+91 32109 87654",
-    email: "catering@weddings.com",
-    location: "Ahmedabad, Gujarat",
-    featured: false,
-    status: "active",
-    views: 267,
-    postedBy: "Manoj Agarwal",
-    postedByPhone: "+91 32109 87654",
-    createdAt: "2024-01-09T08:45:00Z",
-    updatedAt: "2024-01-09T08:45:00Z"
-  },
-  {
-    id: 8,
-    title: "Gold Jewellery Exchange",
-    category: "Business",
-    description: "Buying and selling gold jewellery. Best rates guaranteed. Trusted by Agarwal community for generations. Home service available.",
-    contact: "+91 21098 76543",
-    location: "Jaipur, Rajasthan",
-    featured: false,
-    status: "active",
-    views: 189,
-    postedBy: "Lakshmi Agarwal",
-    postedByPhone: "+91 21098 76543",
-    createdAt: "2024-01-08T15:10:00Z",
-    updatedAt: "2024-01-08T15:10:00Z"
-  }
-];
+// API Base URL
+const API_BASE_URL = "http://localhost:4005/api/classifieds";
 
 const Classified = () => {
   const { showToast } = useToast();
@@ -167,51 +36,96 @@ const Classified = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showSavedModal, setShowSavedModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [selectedContactItem, setSelectedContactItem] = useState<ClassifiedItem | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [savedClassifieds, setSavedClassifieds] = useState<number[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchFilters, setSearchFilters] = useState({
+    business_category: "All",
+    firm_name: "",
+    location: "",
+    status: "All"
+  });
 
   const categories = ["All", "Business", "Real Estate", "Jobs", "Vehicles", "Education", "Events", "Other"];
 
-  // Load saved classifieds from localStorage
+  // Fetch classifieds from API with search filters
+  const fetchClassifieds = async (searchParams?: { business_category?: string; firm_name?: string }) => {
+    try {
+      setLoading(true);
+      
+      // Build query parameters
+      const params = new URLSearchParams();
+      if (searchParams?.business_category && searchParams.business_category !== "All") {
+        params.append('business_category', searchParams.business_category);
+      }
+      if (searchParams?.firm_name) {
+        params.append('firm_name', searchParams.firm_name);
+      }
+      
+      const queryString = params.toString();
+      const url = queryString ? `${API_BASE_URL}/search?${queryString}` : `${API_BASE_URL}/search`;
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Failed to fetch classifieds');
+      }
+      const data = await response.json();
+      setClassifieds(data);
+    } catch (error) {
+      console.error('Error fetching classifieds:', error);
+      showToast('Failed to load classifieds', 'error');
+      setClassifieds([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load saved classifieds from localStorage and fetch classifieds
   useEffect(() => {
     const saved = localStorage.getItem("savedClassifieds");
     if (saved) {
       setSavedClassifieds(JSON.parse(saved));
     }
+    fetchClassifieds();
   }, []);
 
-  // Filter classifieds based on search and category
-  useEffect(() => {
-    let filtered = staticClassifieds;
-
-    // Filter by category
-    if (selectedCategory !== "All") {
-      filtered = filtered.filter(item => item.category === selectedCategory);
+  // Handle search with API call
+  const handleSearch = async () => {
+    if (!searchTerm.trim() && selectedCategory === "All") {
+      showToast("Please enter a search term or select a category", "warning");
+      return;
     }
+    await fetchClassifieds({
+      business_category: selectedCategory,
+      firm_name: searchTerm
+    });
+  };
 
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(item => 
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.postedBy.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setClassifieds(filtered);
-  }, [selectedCategory, searchTerm]);
-
-  const handleCategoryChange = (category: string) => {
+  // Handle category change with API call
+  const handleCategoryChange = async (category: string) => {
     setSelectedCategory(category);
+    await fetchClassifieds({
+      business_category: category,
+      firm_name: searchTerm
+    });
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Search is handled by useEffect
+  // Handle advanced search
+  const handleAdvancedSearch = async (filters: typeof searchFilters) => {
+    setSearchFilters(filters);
+    setSelectedCategory(filters.business_category);
+    setSearchTerm(filters.firm_name);
+    
+    await fetchClassifieds({
+      business_category: filters.business_category,
+      firm_name: filters.firm_name
+    });
   };
+
+
 
   const handleSaveClassified = (id: number) => {
     const newSaved = savedClassifieds.includes(id) 
@@ -231,10 +145,12 @@ const Classified = () => {
   const handleContact = (classified: ClassifiedItem) => {
     setSelectedContactItem(classified);
     setShowContactModal(true);
+    showToast(`Opening contact details for ${classified.firm_name}`, "info");
   };
 
   const handleCreateSuccess = () => {
-    showToast("Classified created successfully! (Demo mode - not actually saved)", "success");
+    showToast("Business registered successfully! Your listing is under review.", "success");
+    fetchClassifieds(); // Refresh the list
   };
 
   const getCategoryColor = (category: string) => {
@@ -273,46 +189,58 @@ const Classified = () => {
         <div className="relative mx-auto max-w-c-1390 px-7.5 pt-10 lg:px-15 lg:pt-15 xl:px-20 xl:pt-20">
           <SectionHeader
             headerInfo={{
-              title: "Community Classifieds",
-              subtitle: "Browse Local Listings",
-              description: "Find and post community classifieds, business opportunities, and local announcements within the Agarwal Samaj community.",
+              title: "Business Directory",
+              subtitle: "Agarwal Samaj Business Listings",
+              description: "Discover and connect with verified businesses within the Agarwal Samaj community. Register your business to reach potential customers.",
             }}
           />
 
-          {/* Demo Notice */}
-          <div className="mt-8 mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-yellow-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-              <p className="text-yellow-800 text-sm">
-                <strong>Demo Mode:</strong> This is showing static sample data. In production, this would connect to a real database.
-              </p>
+          {/* Loading State */}
+          {loading && (
+            <div className="mt-8 mb-6 text-center py-8">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+              <p className="mt-4 text-gray-600">Loading classifieds...</p>
             </div>
-          </div>
+          )}
 
           {/* Search Bar */}
-          {/* <div className="mt-12 mb-6">
-            <form onSubmit={handleSearch} className="max-w-md mx-auto">
-              <div className="relative">
+          <div className="mt-12 mb-6">
+            <div className="max-w-2xl mx-auto">
+              <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="relative">
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search classifieds..."
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Search businesses by name..."
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 pr-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </button>
-              </div>
-            </form>
-          </div> */}
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAdvancedSearch(true);
+                      showToast("Advanced search options opened", "info");
+                    }}
+                    className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Advanced Search"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                    </svg>
+                  </button>
+                  <button
+                    type="submit"
+                    className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Search"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
 
           {/* Category Filter */}
           <div className="mb-8 flex flex-wrap justify-center gap-4">
@@ -334,111 +262,208 @@ const Classified = () => {
           {/* Action Buttons */}
           <div className="mb-8 text-center flex flex-col sm:flex-row gap-4 justify-center">
             <button 
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => {
+                setShowCreateModal(true);
+                showToast("Opening business registration form", "info");
+              }}
               className="rounded-lg bg-green-600 px-8 py-3 font-medium text-white transition-colors duration-300 hover:bg-green-700"
             >
-              Post New Classified
+              Register Your Business
             </button>
             <button 
-              onClick={() => setShowSavedModal(true)}
+              onClick={() => {
+                setShowStatusModal(true);
+                showToast("Opening status check", "info");
+              }}
+              className="rounded-lg bg-purple-600 px-8 py-3 font-medium text-white transition-colors duration-300 hover:bg-purple-700"
+            >
+              Check Registration Status
+            </button>
+            <button 
+              onClick={() => {
+                setShowSavedModal(true);
+                showToast("Opening saved businesses", "info");
+              }}
               className="rounded-lg bg-blue-600 px-8 py-3 font-medium text-white transition-colors duration-300 hover:bg-blue-700"
             >
               View Saved ({savedClassifieds.length})
             </button>
           </div>
 
-          {/* Classifieds Grid */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {classifieds.map((item) => (
-              <div
-                key={item.id}
-                className={`rounded-lg bg-white shadow-md transition-shadow duration-300 hover:shadow-lg dark:bg-blacksection border-l-4 ${
-                  item.featured ? "border-l-yellow-500" : "border-l-blue-500"
-                }`}
-              >
-                <div className="p-6">
-                  <div className="mb-3 flex items-start justify-between">
-                    <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(item.category)}`}>
-                      {item.category}
-                    </span>
-                    {item.featured && (
-                      <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs text-yellow-800">
-                        Featured
-                      </span>
-                    )}
-                  </div>
-                  
-                  <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                    {item.title}
-                  </h3>
-                  
-                  <p className="mb-4 line-clamp-3 text-sm text-gray-600">
-                    {item.description}
-                  </p>
+          {/* Business Statistics */}
+          <div className="mb-8">
+            <BusinessStats />
+          </div>
 
-                  {/* Price */}
-                  {item.price && (
-                    <div className="mb-3">
-                      <span className="text-lg font-bold text-green-600">
-                        {formatPrice(item.price)}
-                      </span>
+          {/* Business Directory Grid */}
+          {!loading && (
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {classifieds.map((business) => (
+                <div
+                  key={business.id}
+                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
+                >
+                  {/* Business Photos */}
+                  {business.photos && business.photos.split(',').length > 0 && (
+                    <div className="h-48 overflow-hidden">
+                      <img
+                        src={`http://localhost:4005/uploads/${business.photos.split(',')[0]}`}
+                        alt={`${business.firm_name} business photo`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
                     </div>
                   )}
 
-                  {/* Location */}
-                  {item.location && (
-                    <div className="mb-3 flex items-center text-sm text-gray-500">
-                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {/* Business Header */}
+                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white">
+                    <div className="flex items-start justify-between mb-3">
+                      <span className={`text-xs px-3 py-1 rounded-full bg-white/20 text-white font-medium`}>
+                        {business.business_category}
+                      </span>
+                      <span className={`rounded-full px-3 py-1 text-xs font-medium ${
+                        business.status === "approved" 
+                          ? "bg-green-500 text-white" 
+                          : business.status === "pending"
+                          ? "bg-yellow-500 text-white"
+                          : "bg-red-500 text-white"
+                      }`}>
+                        {business.status === "approved" ? "✓ Verified" : business.status === "pending" ? "⏳ Pending" : "❌ Rejected"}
+                      </span>
+                    </div>
+                    
+                    <h3 className="text-xl font-bold mb-2">
+                      {business.firm_name}
+                    </h3>
+                    
+                    <p className="text-blue-100 text-sm">
+                      Contact: <span className="font-medium">{business.person_name}</span>
+                    </p>
+                  </div>
+
+                  {/* Business Details */}
+                  <div className="p-6">
+                    {/* Address */}
+                    <div className="mb-4">
+                      <div className="flex items-start">
+                        <svg className="w-5 h-5 text-gray-400 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      {item.location}
+                        <div>
+                          <p className="text-sm font-medium text-gray-700 mb-1">Business Address</p>
+                          <p className="text-sm text-gray-600 leading-relaxed">{business.firm_address}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Contact Information */}
+                    <div className="space-y-3 mb-6">
+                      {/* Phone */}
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                          <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">{business.phone}</p>
+                        </div>
+                      </div>
+
+                      {/* Email */}
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                          <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">{business.email}</p>
+                        </div>
+                      </div>
+
+                      {/* Website */}
+                      {business.website && (
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                            <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                            </svg>
+                          </div>
+                          <div>
+                            <a href={business.website} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-blue-600 hover:underline">
+                              Visit Website
+                            </a>
+                          </div>
                     </div>
                   )}
-                  
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                    <span>Posted by: {item.postedBy}</span>
-                    <span>{formatDate(item.createdAt)}</span>
+                    </div>
+
+                    {/* Posted Date */}
+                    <div className="text-xs text-gray-500 mb-4 pb-4 border-b border-gray-100">
+                      Listed on {formatDate(business.created_at)}
                   </div>
                   
-                  <div className="flex gap-2">
+                    {/* Action Buttons */}
+                    <div className="flex gap-3">
                     <button 
-                      onClick={() => handleContact(item)}
-                      className="flex-1 rounded bg-blue-600 py-2 px-4 text-sm font-medium text-white transition-colors duration-300 hover:bg-blue-700"
+                        onClick={() => handleContact(business)}
+                        className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center"
                     >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
                       Contact
                     </button>
                     <button 
-                      onClick={() => handleSaveClassified(item.id)}
-                      className={`rounded py-2 px-4 text-sm font-medium transition-colors duration-300 ${
-                        savedClassifieds.includes(item.id)
+                        onClick={() => handleSaveClassified(business.id)}
+                        className={`px-4 py-3 rounded-lg font-medium transition-colors duration-300 flex items-center justify-center ${
+                          savedClassifieds.includes(business.id)
                           ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
                     >
-                      {savedClassifieds.includes(item.id) ? "Saved" : "Save"}
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                        </svg>
                     </button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
+          )}
 
           {/* No Results */}
-          {classifieds.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
-                <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          {!loading && classifieds.length === 0 && (
+            <div className="text-center py-16">
+              <div className="text-gray-400 mb-6">
+                <svg className="w-20 h-20 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No classifieds found</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">No businesses found</h3>
+              <p className="text-gray-600 mb-6 max-w-md mx-auto">
                 {searchTerm || selectedCategory !== "All" 
-                  ? "Try adjusting your search or filters"
-                  : "Be the first to post a classified!"
+                  ? "Try adjusting your search terms or category filters to find more businesses."
+                  : "No businesses are currently listed. Be the first to register your business!"
                 }
               </p>
+              {(!searchTerm && selectedCategory === "All") && (
+                <button 
+                  onClick={() => {
+                    setShowCreateModal(true);
+                    showToast("Opening business registration form", "info");
+                  }}
+                  className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-300"
+                >
+                  Register Your Business
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -467,6 +492,22 @@ const Classified = () => {
             setShowContactModal(false);
             setSelectedContactItem(null);
           }}
+        />
+      )}
+
+      {/* Status Check Modal */}
+      {showStatusModal && (
+        <StatusCheckModal
+          onClose={() => setShowStatusModal(false)}
+        />
+      )}
+
+      {/* Advanced Search Modal */}
+      {showAdvancedSearch && (
+        <AdvancedSearchModal
+          onClose={() => setShowAdvancedSearch(false)}
+          onSearch={handleAdvancedSearch}
+          currentFilters={searchFilters}
         />
       )}
     </>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import axios from "axios";
+// import ToastProvider from "@/app/context/ToastContext";
 
 type CreateProfileProps = {
   onClose: () => void;
@@ -110,7 +111,7 @@ const CreateProfile = ({ onClose, onSave }: CreateProfileProps) => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 20000);
+    setTimeout(() => setShowToast(false), 2000);
   };
 
   // Validation functions
@@ -946,7 +947,8 @@ const CreateProfile = ({ onClose, onSave }: CreateProfileProps) => {
         {renderInput("education", "Education", "select", "", true, [
           { value: "btech", label: "B.Tech" },
           { value: "mba", label: "MBA" },
-          { value: "mca", label: "MCA" }
+          { value: "mca", label: "MCA" },
+          { value: "other", label: "Other" }
         ])}
       </div>
 

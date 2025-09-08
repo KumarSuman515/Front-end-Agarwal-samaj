@@ -1,24 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useToast } from "@/app/context/ToastContext";
 
 interface ClassifiedItem {
   id: number;
-  title: string;
-  category: string;
-  description: string;
-  contact: string;
-  email?: string;
-  location?: string;
-  price?: number;
-  featured: boolean;
+  person_name: string;
+  firm_name: string;
+  firm_address: string;
+  phone: string;
+  email: string;
+  website?: string;
+  business_category: string;
+  photos?: string;
   status: string;
-  views: number;
-  postedBy: string;
-  postedByPhone: string;
-  expiresAt?: string;
-  createdAt: string;
-  updatedAt: string;
+  approval_by?: number;
+  approval_date?: string;
+  created_at: string;
 }
 
 interface ContactModalProps {
@@ -27,29 +25,76 @@ interface ContactModalProps {
 }
 
 const ContactModal = ({ classified, onClose }: ContactModalProps) => {
-  if (!classified) return null;
+  const { showToast } = useToast();
+  const [businessDetails, setBusinessDetails] = useState<ClassifiedItem | null>(classified);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch detailed business information if only ID is provided
+  useEffect(() => {
+    if (classified && typeof classified === 'number') {
+      fetchBusinessDetails(classified);
+    } else if (classified) {
+      setBusinessDetails(classified);
+    }
+  }, [classified]);
+
+  const fetchBusinessDetails = async (id: number) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:4005/api/classifieds/${id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch business details');
+      }
+      const data = await response.json();
+      setBusinessDetails(data);
+    } catch (error) {
+      console.error('Error fetching business details:', error);
+      showToast('Failed to load business details', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!businessDetails) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999] p-4">
+        <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <div className="animate-pulse">
+            <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+            <div className="space-y-4">
+              <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+              <div className="h-10 bg-gray-200 rounded"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+              <div className="h-10 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleCall = () => {
-    window.open(`tel:${classified.contact}`, '_self');
+    window.open(`tel:${businessDetails.phone}`, '_self');
   };
 
   const handleEmail = () => {
-    if (classified.email) {
-      window.open(`mailto:${classified.email}`, '_self');
+    if (businessDetails.email) {
+      window.open(`mailto:${businessDetails.email}`, '_self');
     }
   };
 
   const handleWhatsApp = () => {
-    const phoneNumber = classified.contact.replace(/\s+/g, '').replace(/[^\d+]/g, '');
-    const message = `Hi, I'm interested in your classified: ${classified.title}`;
+    const phoneNumber = businessDetails.phone.replace(/\s+/g, '').replace(/[^\d+]/g, '');
+    const message = `Hi, I'm interested in your business: ${businessDetails.firm_name}`;
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text).then(() => {
-      // You can add a toast notification here if needed
-      console.log(`${type} copied to clipboard`);
+      showToast(`${type} copied to clipboard`, 'success');
+    }).catch(() => {
+      showToast(`Failed to copy ${type.toLowerCase()}`, 'error');
     });
   };
 
@@ -60,8 +105,8 @@ const ContactModal = ({ classified, onClose }: ContactModalProps) => {
         <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 rounded-t-xl">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold">Contact Information</h2>
-              <p className="text-blue-100 text-sm mt-1">Get in touch with the seller</p>
+              <h2 className="text-xl font-bold">Business Contact</h2>
+              <p className="text-blue-100 text-sm mt-1">Get in touch with the business owner</p>
             </div>
             <button
               onClick={onClose}
@@ -77,14 +122,14 @@ const ContactModal = ({ classified, onClose }: ContactModalProps) => {
 
         {/* Content */}
         <div className="p-6">
-          {/* Classified Info */}
+          {/* Business Info */}
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-semibold text-gray-900 mb-2">{classified.title}</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{businessDetails.firm_name}</h3>
             <div className="flex items-center text-sm text-gray-600">
               <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs mr-2">
-                {classified.category}
+                {businessDetails.business_category}
               </span>
-              <span>Posted by {classified.postedBy}</span>
+              <span>Contact: {businessDetails.person_name}</span>
             </div>
           </div>
 
@@ -101,12 +146,12 @@ const ContactModal = ({ classified, onClose }: ContactModalProps) => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Phone Number</p>
-                    <p className="font-medium text-gray-900">{classified.contact}</p>
+                    <p className="font-medium text-gray-900">{businessDetails.phone}</p>
                   </div>
                 </div>
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => copyToClipboard(classified.contact, 'Phone number')}
+                    onClick={() => copyToClipboard(businessDetails.phone, 'Phone number')}
                     className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
                     title="Copy phone number"
                   >
@@ -139,7 +184,7 @@ const ContactModal = ({ classified, onClose }: ContactModalProps) => {
             </div>
 
             {/* Email */}
-            {classified.email && (
+            {businessDetails.email && (
               <div className="bg-white border border-gray-200 rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
@@ -150,12 +195,12 @@ const ContactModal = ({ classified, onClose }: ContactModalProps) => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Email Address</p>
-                      <p className="font-medium text-gray-900">{classified.email}</p>
+                      <p className="font-medium text-gray-900">{businessDetails.email}</p>
                     </div>
                   </div>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => copyToClipboard(classified.email!, 'Email')}
+                      onClick={() => copyToClipboard(businessDetails.email!, 'Email')}
                       className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
                       title="Copy email"
                     >
@@ -179,54 +224,47 @@ const ContactModal = ({ classified, onClose }: ContactModalProps) => {
               </div>
             )}
 
-            {/* Location */}
-            {classified.location && (
+            {/* Website */}
+            {businessDetails.website && (
               <div className="bg-white border border-gray-200 rounded-lg p-4">
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
                     <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Location</p>
-                    <p className="font-medium text-gray-900">{classified.location}</p>
+                    <p className="text-sm text-gray-600">Website</p>
+                    <a href={businessDetails.website} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 hover:underline">
+                      {businessDetails.website}
+                    </a>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Price */}
-            {classified.price && (
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Price</p>
-                    <p className="font-bold text-green-600 text-lg">
-                      {new Intl.NumberFormat('en-IN', {
-                        style: 'currency',
-                        currency: 'INR',
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                      }).format(classified.price)}
-                    </p>
-                  </div>
+            {/* Address */}
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="flex items-start">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-1">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Business Address</p>
+                  <p className="font-medium text-gray-900">{businessDetails.firm_address}</p>
                 </div>
               </div>
-            )}
+            </div>
           </div>
 
           {/* Footer */}
           <div className="mt-6 pt-4 border-t border-gray-200">
             <div className="text-center text-sm text-gray-500">
-              <p>Contact the seller directly for more information</p>
-              <p className="mt-1">Posted on {new Date(classified.createdAt).toLocaleDateString('en-IN', {
+              <p>Contact the business owner directly for more information</p>
+              <p className="mt-1">Posted on {new Date(businessDetails.created_at).toLocaleDateString('en-IN', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'

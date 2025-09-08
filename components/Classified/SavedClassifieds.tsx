@@ -6,156 +6,20 @@ import { useToast } from "@/app/context/ToastContext";
 
 interface ClassifiedItem {
   id: number;
-  title: string;
-  category: string;
-  description: string;
-  contact: string;
-  email?: string;
-  location?: string;
-  price?: number;
-  featured: boolean;
+  person_name: string;
+  firm_name: string;
+  firm_address: string;
+  phone: string;
+  email: string;
+  website: string;
+  business_category: string;
+  photos: string;
   status: string;
-  views: number;
-  postedBy: string;
-  postedByPhone: string;
-  expiresAt?: string;
-  createdAt: string;
-  updatedAt: string;
+  approval_by?: number;
+  approval_date?: string;
+  created_at: string;
+  updated_at: string;
 }
-
-// Static sample data (same as in main component)
-const staticClassifieds: ClassifiedItem[] = [
-  {
-    id: 1,
-    title: "Beautiful 3BHK Apartment for Rent",
-    category: "Real Estate",
-    description: "Spacious 3BHK apartment available for rent in prime location. Fully furnished with modern amenities, parking space, and 24/7 security. Perfect for families.",
-    contact: "+91 98765 43210",
-    email: "rental@example.com",
-    location: "Mumbai, Maharashtra",
-    price: 45000,
-    featured: true,
-    status: "active",
-    views: 156,
-    postedBy: "Rajesh Agarwal",
-    postedByPhone: "+91 98765 43210",
-    createdAt: "2024-01-15T10:30:00Z",
-    updatedAt: "2024-01-15T10:30:00Z"
-  },
-  {
-    id: 2,
-    title: "Software Developer Required",
-    category: "Jobs",
-    description: "Looking for experienced React/Node.js developer. 3+ years experience required. Competitive salary with benefits. Work from home option available.",
-    contact: "+91 87654 32109",
-    email: "hr@techcompany.com",
-    location: "Delhi, NCR",
-    price: 800000,
-    featured: false,
-    status: "active",
-    views: 89,
-    postedBy: "Priya Agarwal",
-    postedByPhone: "+91 87654 32109",
-    createdAt: "2024-01-14T14:20:00Z",
-    updatedAt: "2024-01-14T14:20:00Z"
-  },
-  {
-    id: 3,
-    title: "Maruti Swift VXI 2019 Model",
-    category: "Vehicles",
-    description: "Well maintained Maruti Swift VXI, single owner, 25,000 km driven. All service records available. Excellent condition, ready to drive.",
-    contact: "+91 76543 21098",
-    location: "Bangalore, Karnataka",
-    price: 650000,
-    featured: true,
-    status: "active",
-    views: 234,
-    postedBy: "Amit Agarwal",
-    postedByPhone: "+91 76543 21098",
-    createdAt: "2024-01-13T09:15:00Z",
-    updatedAt: "2024-01-13T09:15:00Z"
-  },
-  {
-    id: 4,
-    title: "Agarwal Samaj Annual Function",
-    category: "Events",
-    description: "Join us for the annual Agarwal Samaj function on 25th January 2024. Cultural programs, dinner, and networking opportunities. All members welcome.",
-    contact: "+91 65432 10987",
-    email: "events@agarwalsamaj.com",
-    location: "Pune, Maharashtra",
-    featured: false,
-    status: "active",
-    views: 445,
-    postedBy: "Suresh Agarwal",
-    postedByPhone: "+91 65432 10987",
-    createdAt: "2024-01-12T16:45:00Z",
-    updatedAt: "2024-01-12T16:45:00Z"
-  },
-  {
-    id: 5,
-    title: "Grocery Store for Sale",
-    category: "Business",
-    description: "Established grocery store in prime location with good customer base. Monthly turnover 5-6 lakhs. Reason for sale: relocation. Serious buyers only.",
-    contact: "+91 54321 09876",
-    location: "Chennai, Tamil Nadu",
-    price: 2500000,
-    featured: false,
-    status: "active",
-    views: 178,
-    postedBy: "Vikram Agarwal",
-    postedByPhone: "+91 54321 09876",
-    createdAt: "2024-01-11T11:30:00Z",
-    updatedAt: "2024-01-11T11:30:00Z"
-  },
-  {
-    id: 6,
-    title: "CA Coaching Classes",
-    category: "Education",
-    description: "Professional CA coaching by experienced faculty. Both online and offline batches available. Special discount for Agarwal community members.",
-    contact: "+91 43210 98765",
-    email: "ca@education.com",
-    location: "Hyderabad, Telangana",
-    price: 75000,
-    featured: true,
-    status: "active",
-    views: 123,
-    postedBy: "Neha Agarwal",
-    postedByPhone: "+91 43210 98765",
-    createdAt: "2024-01-10T13:20:00Z",
-    updatedAt: "2024-01-10T13:20:00Z"
-  },
-  {
-    id: 7,
-    title: "Wedding Catering Services",
-    category: "Business",
-    description: "Premium wedding catering services with traditional and modern menu options. Serving Agarwal community for 15+ years. Book early for best rates.",
-    contact: "+91 32109 87654",
-    email: "catering@weddings.com",
-    location: "Ahmedabad, Gujarat",
-    featured: false,
-    status: "active",
-    views: 267,
-    postedBy: "Manoj Agarwal",
-    postedByPhone: "+91 32109 87654",
-    createdAt: "2024-01-09T08:45:00Z",
-    updatedAt: "2024-01-09T08:45:00Z"
-  },
-  {
-    id: 8,
-    title: "Gold Jewellery Exchange",
-    category: "Business",
-    description: "Buying and selling gold jewellery. Best rates guaranteed. Trusted by Agarwal community for generations. Home service available.",
-    contact: "+91 21098 76543",
-    location: "Jaipur, Rajasthan",
-    featured: false,
-    status: "active",
-    views: 189,
-    postedBy: "Lakshmi Agarwal",
-    postedByPhone: "+91 21098 76543",
-    createdAt: "2024-01-08T15:10:00Z",
-    updatedAt: "2024-01-08T15:10:00Z"
-  }
-];
 
 interface SavedClassifiedsProps {
   onClose: () => void;
@@ -163,77 +27,98 @@ interface SavedClassifiedsProps {
 
 const SavedClassifieds = ({ onClose }: SavedClassifiedsProps) => {
   const { showToast } = useToast();
-  const [savedIds, setSavedIds] = useState<number[]>([]);
-  const [savedClassifieds, setSavedClassifieds] = useState<ClassifiedItem[]>([]);
+  const [savedClassifieds, setSavedClassifieds] = useState<number[]>([]);
+  const [classifieds, setClassifieds] = useState<ClassifiedItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedContactItem, setSelectedContactItem] = useState<ClassifiedItem | null>(null);
 
+  const API_BASE_URL = "http://localhost:4005/api/classifieds";
+
+  // Load saved classifieds from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("savedClassifieds");
     if (saved) {
-      const ids = JSON.parse(saved);
-      setSavedIds(ids);
-      
-      // Filter static data to get saved classifieds
-      const savedItems = staticClassifieds.filter(item => ids.includes(item.id));
-      setSavedClassifieds(savedItems);
+      setSavedClassifieds(JSON.parse(saved));
     }
   }, []);
 
-  const handleRemoveSaved = (id: number) => {
-    const newSavedIds = savedIds.filter(savedId => savedId !== id);
-    setSavedIds(newSavedIds);
-    setSavedClassifieds(prev => prev.filter(c => c.id !== id));
-    localStorage.setItem("savedClassifieds", JSON.stringify(newSavedIds));
-    showToast("Removed from saved", "success");
+  // Fetch classifieds data
+  useEffect(() => {
+    if (savedClassifieds.length > 0) {
+      fetchClassifieds();
+    } else {
+      setLoading(false);
+    }
+  }, [savedClassifieds]);
+
+  const fetchClassifieds = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/search`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch classifieds');
+      }
+      const data = await response.json();
+      
+      // Filter only saved classifieds
+      const savedData = data.filter((item: ClassifiedItem) => 
+        savedClassifieds.includes(item.id)
+      );
+      setClassifieds(savedData);
+    } catch (error) {
+      console.error('Error fetching classifieds:', error);
+      showToast('Failed to load saved classifieds', 'error');
+      setClassifieds([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleContact = (classified: ClassifiedItem) => {
+  const handleRemoveSaved = (id: number) => {
+    const newSaved = savedClassifieds.filter(savedId => savedId !== id);
+    setSavedClassifieds(newSaved);
+    localStorage.setItem("savedClassifieds", JSON.stringify(newSaved));
+    
+    // Remove from displayed list
+    setClassifieds(prev => prev.filter(item => item.id !== id));
+    
+    showToast("Removed from saved list", "success");
+  };
+
+  const handleContactClick = (classified: ClassifiedItem) => {
     setSelectedContactItem(classified);
     setShowContactModal(true);
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case "Business": return "bg-blue-100 text-blue-800";
-      case "Real Estate": return "bg-green-100 text-green-800";
-      case "Jobs": return "bg-purple-100 text-purple-800";
-      case "Vehicles": return "bg-orange-100 text-orange-800";
-      case "Education": return "bg-pink-100 text-pink-800";
-      case "Events": return "bg-indigo-100 text-indigo-800";
-      default: return "bg-gray-100 text-gray-800";
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "approved":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "disapproved":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
-  };
-
-  const formatPrice = (price?: number) => {
-    if (!price) return null;
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999] p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">Saved Classifieds</h2>
+            <div>
+              <h2 className="text-xl font-bold">Saved Businesses</h2>
+              <p className="text-blue-100 text-sm mt-1">
+                {savedClassifieds.length} saved business{savedClassifieds.length !== 1 ? 'es' : ''}
+              </p>
+            </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-              type="button"
+              className="text-white hover:text-blue-200 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -243,83 +128,91 @@ const SavedClassifieds = ({ onClose }: SavedClassifiedsProps) => {
         </div>
 
         {/* Content */}
-        <div className="p-6">
-          {savedClassifieds.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
-                <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+              <p className="mt-4 text-gray-600">Loading saved businesses...</p>
+            </div>
+          ) : classifieds.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="text-gray-400 mb-6">
+                <svg className="w-20 h-20 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No saved classifieds</h3>
-              <p className="text-gray-600">Start saving classifieds to see them here</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Saved Businesses</h3>
+              <p className="text-gray-600 mb-6">
+                You haven't saved any businesses yet. Start exploring and save businesses you're interested in!
+              </p>
+              <button
+                onClick={onClose}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              >
+                Explore Businesses
+              </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {savedClassifieds.map((item) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {classifieds.map((business) => (
                 <div
-                  key={item.id}
-                  className={`rounded-lg bg-white shadow-md border border-gray-200 border-l-4 ${
-                    item.featured ? "border-l-yellow-500" : "border-l-blue-500"
-                  }`}
+                  key={business.id}
+                  className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <div className="p-6">
-                    <div className="mb-3 flex items-start justify-between">
-                      <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(item.category)}`}>
-                        {item.category}
-                      </span>
-                      {item.featured && (
-                        <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs text-yellow-800">
-                          Featured
-                        </span>
-                      )}
+                  {/* Business Photo */}
+                  {business.photos && business.photos.split(',').length > 0 && (
+                    <div className="h-48 overflow-hidden rounded-t-lg">
+                      <img
+                        src={`http://localhost:4005/uploads/${business.photos.split(',')[0]}`}
+                        alt={`${business.firm_name} business photo`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
                     </div>
-                    
-                    <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                      {item.title}
-                    </h3>
-                    
-                    <p className="mb-4 line-clamp-3 text-sm text-gray-600">
-                      {item.description}
+                  )}
+
+                  {/* Business Info */}
+                  <div className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
+                        {business.firm_name}
+                      </h3>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(business.status)}`}>
+                        {business.status}
+                      </span>
+                    </div>
+
+                    <p className="text-sm text-gray-600 mb-2">
+                      <span className="font-medium">Contact:</span> {business.person_name}
                     </p>
 
-                    {/* Price */}
-                    {item.price && (
-                      <div className="mb-3">
-                        <span className="text-lg font-bold text-green-600">
-                          {formatPrice(item.price)}
-                        </span>
-                      </div>
-                    )}
+                    <p className="text-sm text-gray-600 mb-2">
+                      <span className="font-medium">Category:</span> {business.business_category}
+                    </p>
 
-                    {/* Location */}
-                    {item.location && (
-                      <div className="mb-3 flex items-center text-sm text-gray-500">
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        {item.location}
-                      </div>
-                    )}
-                    
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                      <span>Posted by: {item.postedBy}</span>
-                      <span>{formatDate(item.createdAt)}</span>
-                    </div>
-                    
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                      <span className="font-medium">Address:</span> {business.firm_address}
+                    </p>
+
+                    {/* Action Buttons */}
                     <div className="flex gap-2">
-                      <button 
-                        onClick={() => handleContact(item)}
-                        className="flex-1 rounded bg-blue-600 py-2 px-4 text-sm font-medium text-white transition-colors duration-300 hover:bg-blue-700"
+                      <button
+                        onClick={() => handleContactClick(business)}
+                        className="flex-1 bg-blue-600 text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
                       >
                         Contact
                       </button>
-                      <button 
-                        onClick={() => handleRemoveSaved(item.id)}
-                        className="rounded bg-red-100 text-red-700 py-2 px-4 text-sm font-medium transition-colors duration-300 hover:bg-red-200"
+                      <button
+                        onClick={() => handleRemoveSaved(business.id)}
+                        className="bg-red-100 text-red-600 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+                        title="Remove from saved"
                       >
-                        Remove
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
                       </button>
                     </div>
                   </div>

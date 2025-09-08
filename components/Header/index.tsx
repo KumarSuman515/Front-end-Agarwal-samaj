@@ -29,28 +29,28 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed left-0 top-0 z-99999 w-full py-7 ${
+      className={`fixed left-0 top-0 z-99999 w-full py-7 transition-all duration-300 ${
         stickyMenu
-          ? "bg-white py-4! shadow-sm transition duration-100 dark:bg-black"
-          : ""
+          ? "glass-effect py-4! shadow-lg backdrop-blur-md"
+          : "bg-transparent"
       }`}
     >
       <div className="relative mx-auto max-w-c-1390 items-center justify-between px-4 md:px-8 xl:flex 2xl:px-0">
         <div className="flex w-full items-center justify-between xl:w-1/4">
-          <a href="/">
+          <a href="/" className="hover-lift">
             <Image
-              src="/images/logo/logo-dark.svg"
-              alt="logo"
-              width={119.03}
-              height={30}
-              className="hidden w-full dark:block"
+              src="/images/logo/agarwal-logo-premium-dark.svg"
+              alt="Agarwal Samaj Logo"
+              width={220}
+              height={50}
+              className="hidden w-full dark:block transition-all duration-300"
             />
             <Image
-              src="/images/logo/logo-light.svg"
-              alt="logo"
-              width={119.03}
-              height={30}
-              className="w-full dark:hidden"
+              src="/images/logo/agarwal-logo-light-optimized.svg"
+              alt="Agarwal Samaj Logo"
+              width={220}
+              height={50}
+              className="w-full dark:hidden transition-all duration-300"
             />
           </a>
 
@@ -137,11 +137,11 @@ const Header = () => {
                   ) : (
                     <Link
                       href={`${menuItem.path}`}
-                      className={
+                      className={`transition-all duration-300 hover:text-primary hover:scale-105 ${
                         pathUrl === menuItem.path
-                          ? "text-primary hover:text-primary"
-                          : "hover:text-primary"
-                      }
+                          ? "text-primary font-semibold"
+                          : "text-waterloo dark:text-manatee"
+                      }`}
                     >
                       {menuItem.title}
                     </Link>

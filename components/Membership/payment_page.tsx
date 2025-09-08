@@ -12,14 +12,173 @@ interface MembershipPaymentProps {
   selectedPlan: Plan | null;
 }
 
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  occupation: string;
+  age: string;
+  gender: string;
+  emergencyContact: string;
+  emergencyPhone: string;
+  paymentMethod: 'card' | 'upi' | 'paytm';
+  upiId: string;
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
+  cardName: string;
+}
+
 const MembershipPayment: React.FC<MembershipPaymentProps> = ({ selectedPlan }) => {
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi'>('card');
-  const [upiId, setUpiId] = useState('');
+  const [paymentMethod] = useState<'paytm'>('paytm');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Partial<FormData>>({});
+  
+  const [formData, setFormData] = useState<FormData>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    pincode: '',
+    occupation: '',
+    age: '',
+    gender: '',
+    emergencyContact: '',
+    emergencyPhone: '',
+    paymentMethod: 'paytm',
+    upiId: '',
+    cardNumber: '',
+    expiryDate: '',
+    cvv: '',
+    cardName: ''
+  });
 
   // Default values if no plan is selected
   const planName = selectedPlan?.name || "Premium Member";
-  const planPrice = selectedPlan?.price || "₹499.00";
-  const planDuration = selectedPlan?.duration || "per month";
+  const planPrice = selectedPlan?.price || "₹500";
+  const planDuration = selectedPlan?.duration || "per year";
+
+  // Form validation
+  const validateForm = (): boolean => {
+    const newErrors: Partial<FormData> = {};
+    
+    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
+    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
+    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
+    else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) newErrors.phone = 'Phone number must be 10 digits';
+    if (!formData.address.trim()) newErrors.address = 'Address is required';
+    if (!formData.city.trim()) newErrors.city = 'City is required';
+    if (!formData.state.trim()) newErrors.state = 'State is required';
+    if (!formData.pincode.trim()) newErrors.pincode = 'Pincode is required';
+    else if (!/^\d{6}$/.test(formData.pincode)) newErrors.pincode = 'Pincode must be 6 digits';
+    if (!formData.age.trim()) newErrors.age = 'Age is required';
+    if (!formData.gender.trim()) newErrors.gender = 'Gender is required';
+    if (!formData.emergencyContact.trim()) newErrors.emergencyContact = 'Emergency contact is required';
+    if (!formData.emergencyPhone.trim()) newErrors.emergencyPhone = 'Emergency phone is required';
+    else if (!/^\d{10}$/.test(formData.emergencyPhone.replace(/\D/g, ''))) newErrors.emergencyPhone = 'Emergency phone must be 10 digits';
+
+    // Paytm payment method - no additional validation needed
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle form input changes
+  const handleInputChange = (field: keyof FormData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  // Paytm Payment Integration
+  const initiatePaytmPayment = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Generate unique order ID
+      const orderId = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Prepare payment data
+      const paymentData = {
+        orderId: orderId,
+        amount: planPrice.replace('₹', '').replace(',', ''),
+        customerId: formData.email,
+        customerName: `${formData.firstName} ${formData.lastName}`,
+        customerEmail: formData.email,
+        customerPhone: formData.phone,
+        planName: planName,
+        planDuration: planDuration,
+        memberData: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+          occupation: formData.occupation,
+          age: formData.age,
+          gender: formData.gender,
+          emergencyContact: formData.emergencyContact,
+          emergencyPhone: formData.emergencyPhone
+        }
+      };
+
+      // For demo purposes, we'll simulate Paytm integration
+      // In production, you would make API calls to your backend which handles Paytm
+      console.log('Payment Data:', paymentData);
+      
+      // Simulate API call to backend
+      const response = await fetch('/api/membership/payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(paymentData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        // Redirect to Paytm payment page
+        if (result.paymentUrl) {
+          window.location.href = result.paymentUrl;
+        } else {
+          alert('Payment initiated successfully! Check your email for confirmation.');
+        }
+      } else {
+        throw new Error('Payment initiation failed');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Payment failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    await initiatePaytmPayment();
+  };
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-indigo-100 py-16 px-6">
@@ -82,136 +241,248 @@ const MembershipPayment: React.FC<MembershipPaymentProps> = ({ selectedPlan }) =
           </div>
         </div>
 
-        {/* Right Section - Payment Form */}
+        {/* Right Section - Membership Form */}
         <div className="p-8 lg:p-12">
-          <div className="max-w-md mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Complete Your Payment</h2>
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Complete Your Membership Registration</h2>
             
-            {/* Contact Information */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
-              <div className="space-y-4">
-                
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                />
-               
-              </div>
-            </div>
-
-            {/* Payment Method Selection */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment Method</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  onClick={() => setPaymentMethod('card')}
-                  className={`p-4 border-2 rounded-xl transition-all ${
-                    paymentMethod === 'card'
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                >
-                  <div className="flex items-center justify-center space-x-2">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                    </svg>
-                    <span className="font-medium">Credit/Debit Card</span>
-                  </div>
-                </button>
-                
-                <button
-                  onClick={() => setPaymentMethod('upi')}
-                  className={`p-4 border-2 rounded-xl transition-all ${
-                    paymentMethod === 'upi'
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                >
-                  <div className="flex items-center justify-center space-x-2">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                    <span className="font-medium">UPI</span>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            {/* Payment Details */}
-            {paymentMethod === 'card' && (
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Card Details</h3>
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="Card Number"
-                    className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  />
-                  <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Personal Information */}
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
                     <input
                       type="text"
-                      placeholder="MM/YY"
-                      className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="First Name *"
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.firstName ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     />
+                    {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+                  </div>
+                  <div>
                     <input
                       type="text"
-                      placeholder="CVV"
-                      className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="Last Name *"
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.lastName ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+                  </div>
+                  <div>
+                    <input
+                      type="email"
+                      placeholder="Email Address *"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.email ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                  </div>
+                  <div>
+                    <input
+                      type="tel"
+                      placeholder="Phone Number *"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.phone ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                  </div>
+                  <div>
+                    <select
+                      value={formData.gender}
+                      onChange={(e) => handleInputChange('gender', e.target.value)}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.gender ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    >
+                      <option value="">Select Gender *</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                    {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      placeholder="Age *"
+                      value={formData.age}
+                      onChange={(e) => handleInputChange('age', e.target.value)}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.age ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
+                  </div>
+                  <div className="md:col-span-2">
+                    <input
+                      type="text"
+                      placeholder="Occupation"
+                      value={formData.occupation}
+                      onChange={(e) => handleInputChange('occupation', e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
               </div>
-            )}
 
-            {paymentMethod === 'upi' && (
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">UPI Details</h3>
+              {/* Address Information */}
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Address Information</h3>
                 <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="UPI ID (e.g., name@upi)"
-                    value={upiId}
-                    onChange={(e) => setUpiId(e.target.value)}
-                    className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  />
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                    <p className="text-sm text-blue-700">
-                      💡 Popular UPI apps: Google Pay, PhonePe, Paytm, BHIM
-                    </p>
+                  <div>
+                    <textarea
+                      placeholder="Full Address *"
+                      value={formData.address}
+                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      rows={3}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.address ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="City *"
+                        value={formData.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          errors.city ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      />
+                      {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="State *"
+                        value={formData.state}
+                        onChange={(e) => handleInputChange('state', e.target.value)}
+                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          errors.state ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      />
+                      {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Pincode *"
+                        value={formData.pincode}
+                        onChange={(e) => handleInputChange('pincode', e.target.value)}
+                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          errors.pincode ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      />
+                      {errors.pincode && <p className="text-red-500 text-sm mt-1">{errors.pincode}</p>}
+                    </div>
                   </div>
                 </div>
               </div>
-            )}
 
-            {/* Billing Address */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Billing Address</h3>
-              <div className="space-y-4">
-              <input
-                  type="text"
-                  placeholder="Full Name"
-                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                />
-                <input
-                  type="text"
-                  placeholder="Street Address"
-                  className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                />
-               
-                
+              {/* Emergency Contact */}
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Emergency Contact</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Emergency Contact Name *"
+                      value={formData.emergencyContact}
+                      onChange={(e) => handleInputChange('emergencyContact', e.target.value)}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.emergencyContact ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {errors.emergencyContact && <p className="text-red-500 text-sm mt-1">{errors.emergencyContact}</p>}
+                  </div>
+                  <div>
+                    <input
+                      type="tel"
+                      placeholder="Emergency Contact Phone *"
+                      value={formData.emergencyPhone}
+                      onChange={(e) => handleInputChange('emergencyPhone', e.target.value)}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.emergencyPhone ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {errors.emergencyPhone && <p className="text-red-500 text-sm mt-1">{errors.emergencyPhone}</p>}
+                  </div>
+                </div>
               </div>
-            </div>
 
-            {/* Submit Button */}
-            <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
-              Pay {planPrice} & Complete Registration
-            </button>
+               {/* Payment Method - Paytm Only */}
+               <div className="bg-gray-50 rounded-xl p-6">
+                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment Method</h3>
+                 <div className="flex justify-center">
+                   <div className="bg-blue-50 border-2 border-blue-500 rounded-xl p-6 w-full max-w-sm">
+                     <div className="flex flex-col items-center space-y-3">
+                       <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                         <span className="text-white font-bold text-lg">P</span>
+                       </div>
+                       <div className="text-center">
+                         <h4 className="font-semibold text-blue-700 text-lg">Paytm Payment</h4>
+                         <p className="text-sm text-blue-600 mt-1">Secure & Fast Payment</p>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+                 
+                 <div className="mt-4">
+                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                     <div className="flex items-center space-x-2">
+                       <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
+                         <span className="text-white font-bold text-xs">✓</span>
+                       </div>
+                       <div>
+                         <p className="text-sm text-green-700 font-medium">
+                           Paytm Payment Gateway Selected
+                         </p>
+                         <p className="text-xs text-green-600 mt-1">
+                           You will be redirected to Paytm's secure payment page after form submission
+                         </p>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               </div>
 
-            <p className="text-xs text-gray-500 text-center mt-4">
-              By completing this payment, you agree to our terms of service and privacy policy.
-            </p>
+              {/* Submit Button */}
+              <button 
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Processing Payment...</span>
+                  </div>
+                ) : (
+                  `Pay ${planPrice} & Complete Registration`
+                )}
+              </button>
+
+              <p className="text-xs text-gray-500 text-center">
+                By completing this payment, you agree to our terms of service and privacy policy.
+                Your payment is secured by Paytm's industry-standard encryption.
+              </p>
+            </form>
           </div>
         </div>
       </div>

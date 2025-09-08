@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import SectionHeader from "@/components/Common/SectionHeader";
 import CreateProfile from "./CreateProfile";
 import axios from "axios";
+import { useToast } from "@/app/context/ToastContext";
 
 // Profile type that matches the backend data structure
 interface Profile {
@@ -98,6 +99,7 @@ const getImageUrl = (imagePath: string): string => {
 };
 
 const Matrimony = () => {
+  const { showToast } = useToast();
   const [showCreateProfile, setShowCreateProfile] = useState(false);
   const [showViewProfile, setShowViewProfile] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
@@ -129,6 +131,7 @@ const Matrimony = () => {
       setFilteredProfiles(profiles);
     } catch (error) {
       console.error("Error fetching profiles:", error);
+      showToast("Failed to load profiles. Please try again later.", "error");
       setOriginalProfiles([]);
       setFilteredProfiles([]);
     } finally {
@@ -145,6 +148,7 @@ const Matrimony = () => {
     // Refresh from server to avoid local storage of submitted data
     fetchProfiles();
     setShowCreateProfile(false);
+    showToast("Profile created successfully!", "success");
   };
 
   // Handle search filters
@@ -209,7 +213,7 @@ const Matrimony = () => {
     if (!connectProfile) return;
     try {
       if (!senderName || !senderEmail) {
-        alert("Please enter your name and email");
+        showToast("Please enter your name and email", "warning");
         return;
       }
       await axios.post(`http://localhost:4005/api/candidates/${connectProfile.id}/connect`, {
@@ -217,17 +221,17 @@ const Matrimony = () => {
         senderEmail:senderEmail,
         message: connectMessage,
       });
-      alert(`Connection request sent to ${connectProfile.name}. You'll be notified when they respond.`);
+      showToast(`Connection request sent to ${connectProfile.name}. You'll be notified when they respond.`, "success");
       setShowConnectModal(false);
       setConnectProfile(null);
       setSenderName("");
       setSenderEmail("");
       setConnectMessage("");
     } catch (err) {
-      console.error(err);
+      console.error("error in handleConnectRequest",err);
       const anyErr: any = err;
       const apiMsg = anyErr?.response?.data?.error || anyErr?.response?.data?.details || anyErr?.message || "Failed to send request. Please try again later.";
-      alert(apiMsg);
+      showToast(apiMsg, "error");
     }
   };
 
@@ -294,6 +298,8 @@ const Matrimony = () => {
                   <option value="Rajasthan">Rajasthan</option>
                   <option value="Uttar Pradesh">Uttar Pradesh</option>
                   <option value="West Bengal">West Bengal</option>
+                  <option value="Chandigarh">Chandigarh</option>
+                  <option value="Punjab">Punjab</option>
                 </select>
               </div>
               <div>
@@ -312,7 +318,8 @@ const Matrimony = () => {
                   <option value="B.Tech">B.Tech</option>
                   <option value="MBA">MBA</option>
                   <option value="CA">CA</option>
-                  <option value="MBBS">MBBS</option>
+                  <option value="Gov Job">Gov Job</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div>

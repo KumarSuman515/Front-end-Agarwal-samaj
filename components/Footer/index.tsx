@@ -5,8 +5,8 @@ import Image from "next/image";
 const Footer = () => {
   return (
     <>
-      <footer className="border-t border-stroke bg-white dark:border-strokedark dark:bg-blacksection">
-        <div className="mx-auto max-w-c-1390 px-4 md:px-8 2xl:px-0">
+      <footer className="border-t border-stroke bg-gradient-to-b from-white to-alabaster dark:border-strokedark dark:from-blacksection dark:to-black">
+        <div className="mx-auto max-w-c-1390 container-padding">
           {/* <!-- Footer Top --> */}
           <div className="py-20 lg:py-25">
             <div className="flex flex-wrap gap-8 lg:justify-between lg:gap-0">
@@ -30,23 +30,23 @@ const Footer = () => {
               >
                 <a href="/" className="relative">
                   <Image
-                    width={110}
-                    height={80}
-                    src="/images/logo/logo-light.svg"
-                    alt="Logo"
+                    width={220}
+                    height={50}
+                    src="/images/logo/agarwal-logo-light-optimized.svg"
+                    alt="Agarwal Samaj Logo"
                     className="dark:hidden"
                   />
                   <Image
-                    width={110}
-                    height={80}
-                    src="/images/logo/logo-dark.svg"
-                    alt="Logo"
+                    width={220}
+                    height={50}
+                    src="/images/logo/agarwal-logo-premium-dark.svg"
+                    alt="Agarwal Samaj Logo"
                     className="hidden dark:block"
                   />
                 </a>
 
                 <p className="mb-10 mt-5">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  A comprehensive community platform for the Agarwal community featuring matrimony, classifieds, and more.
                 </p>
 
                 <p className="mb-1.5 text-sectiontitle uppercase tracking-[5px]">
@@ -56,7 +56,7 @@ const Footer = () => {
                   href="#"
                   className="text-itemtitle font-medium text-black dark:text-white"
                 >
-                  hello@solid.com
+                  info@agarwalsamaj.com
                 </a>
               </motion.div>
 
@@ -86,7 +86,7 @@ const Footer = () => {
                   <ul>
                     <li>
                       <a
-                        href="#"
+                        href="/"
                         className="mb-3 inline-block hover:text-primary"
                       >
                         Home
@@ -94,26 +94,26 @@ const Footer = () => {
                     </li>
                     <li>
                       <a
-                        href="#"
+                        href="/matrimony"
                         className="mb-3 inline-block hover:text-primary"
                       >
-                        Product
+                        Matrimony
                       </a>
                     </li>
                     <li>
                       <a
-                        href="#"
+                        href="/classified"
                         className="mb-3 inline-block hover:text-primary"
                       >
-                        Careers
+                        Classifieds
                       </a>
                     </li>
                     <li>
                       <a
-                        href="#"
+                        href="/membership"
                         className="mb-3 inline-block hover:text-primary"
                       >
-                        Pricing
+                        Membership
                       </a>
                     </li>
                   </ul>
@@ -144,31 +144,31 @@ const Footer = () => {
                   <ul>
                     <li>
                       <a
-                        href="#"
+                        href="/about"
                         className="mb-3 inline-block hover:text-primary"
                       >
-                        Company
+                        About Us
                       </a>
                     </li>
                     <li>
                       <a
-                        href="#"
+                        href="/blog"
                         className="mb-3 inline-block hover:text-primary"
                       >
-                        Press media
+                        Blog
                       </a>
                     </li>
                     <li>
                       <a
-                        href="#"
+                        href="/support"
                         className="mb-3 inline-block hover:text-primary"
                       >
-                        Our Blog
+                        Help & Support
                       </a>
                     </li>
                     <li>
                       <a
-                        href="#"
+                        href="/contact"
                         className="mb-3 inline-block hover:text-primary"
                       >
                         Contact Us
@@ -301,7 +301,7 @@ const Footer = () => {
               className="animate_top"
             >
               <p>
-                &copy; {new Date().getFullYear()} Solid. All rights reserved
+                &copy; {new Date().getFullYear()} Agarwal Samaj. All rights reserved
               </p>
             </motion.div>
 

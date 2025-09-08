@@ -34,7 +34,7 @@ export default function DonationButton() {
           aria-label="Donate to Agarwal Samaj"
         >
           <Heart className="h-6 w-6 fill-current" />
-          <span className="font-semibold">Donate Kre</span>
+          <span className="font-semibold">Donate</span>
 
           <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-yellow-400 text-xs font-bold text-gray-800">
             <Gift className="h-3 w-3" />

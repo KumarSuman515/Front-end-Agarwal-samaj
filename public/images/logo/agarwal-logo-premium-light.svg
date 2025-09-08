@@ -1,0 +1,79 @@
+<svg width="220" height="50" viewBox="0 0 220 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Advanced gradients and effects -->
+  <defs>
+    <linearGradient id="mainGradientLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#A0522D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#CD853F;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="goldGradientLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFA500;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DAA520;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="textGradientLight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#A0522D;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#CD853F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B4513;stop-opacity:1" />
+    </linearGradient>
+    
+    <filter id="glowLight">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Main background circle with enhanced styling -->
+  <circle cx="25" cy="25" r="23" fill="url(#mainGradientLight)" stroke="url(#goldGradientLight)" stroke-width="2.5"/>
+  <circle cx="25" cy="25" r="20" fill="none" stroke="#FFD700" stroke-width="0.8" opacity="0.6"/>
+  <circle cx="25" cy="25" r="17" fill="none" stroke="#DAA520" stroke-width="0.3" opacity="0.4"/>
+  
+  <!-- Enhanced Om symbol with glow effect -->
+  <g filter="url(#glowLight)">
+    <path d="M16 16 C16 12, 19 12, 22 12 C25 12, 28 12, 28 16 C28 20, 25 20, 22 20 C19 20, 16 20, 16 16 Z" fill="url(#goldGradientLight)" stroke="#8B4513" stroke-width="0.8"/>
+    <path d="M22 20 L22 24 L25 24 L25 22 L22 22 Z" fill="url(#goldGradientLight)" stroke="#8B4513" stroke-width="0.8"/>
+  </g>
+  
+  <!-- Decorative inner patterns -->
+  <circle cx="25" cy="25" r="14" fill="none" stroke="#FFD700" stroke-width="0.4" opacity="0.3"/>
+  <circle cx="25" cy="25" r="11" fill="none" stroke="#DAA520" stroke-width="0.2" opacity="0.2"/>
+  
+  <!-- Text: Agarwal with premium styling -->
+  <text x="60" y="22" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="url(#textGradientLight)">
+    AGARWAL
+  </text>
+  
+  <!-- Text: Samaj with enhanced styling -->
+  <text x="60" y="35" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="#8B4513">
+    SAMAJ
+  </text>
+  
+  <!-- Premium decorative line with gradient -->
+  <defs>
+    <linearGradient id="lineGradientLight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:0" />
+      <stop offset="15%" style="stop-color:#8B4513;stop-opacity:0.5" />
+      <stop offset="50%" style="stop-color:#DAA520;stop-opacity:1" />
+      <stop offset="85%" style="stop-color:#8B4513;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#8B4513;stop-opacity:0" />
+    </linearGradient>
+  </defs>
+  <path d="M55 28 L200 28" stroke="url(#lineGradientLight)" stroke-width="2"/>
+  
+  <!-- Enhanced decorative elements -->
+  <circle cx="190" cy="15" r="3" fill="url(#goldGradientLight)" opacity="0.9"/>
+  <circle cx="195" cy="20" r="2.5" fill="#8B4513" opacity="0.8"/>
+  <circle cx="190" cy="25" r="2.5" fill="url(#goldGradientLight)" opacity="0.9"/>
+  <circle cx="195" cy="30" r="3" fill="#8B4513" opacity="0.8"/>
+  <circle cx="190" cy="35" r="2.5" fill="url(#goldGradientLight)" opacity="0.9"/>
+  
+  <!-- Subtle shadow effect -->
+  <circle cx="25" cy="25" r="23" fill="none" stroke="#000000" stroke-width="0.5" opacity="0.1"/>
+  <circle cx="26" cy="26" r="23" fill="none" stroke="#000000" stroke-width="0.3" opacity="0.05"/>
+</svg>
