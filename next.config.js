@@ -11,6 +11,11 @@ const nextConfig = {
         hostname: "cdn.sanity.io",
         port: "",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "4005",
+      },
     ],
   },
 };
