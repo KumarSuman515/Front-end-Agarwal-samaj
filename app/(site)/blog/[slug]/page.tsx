@@ -14,7 +14,8 @@ interface BlogPageProps {
 
 // Generate metadata for each blog post
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
-  const blog = BlogData.find((post) => post.slug === params.slug);
+  const resolvedParams = await params;
+  const blog = BlogData.find((post) => post.slug === resolvedParams.slug);
   
   if (!blog) {
     return {
@@ -41,8 +42,9 @@ export async function generateStaticParams() {
   }));
 }
 
-const BlogPostPage = ({ params }: BlogPageProps) => {
-  const blog = BlogData.find((post) => post.slug === params.slug);
+const BlogPostPage = async ({ params }: BlogPageProps) => {
+  const resolvedParams = await params;
+  const blog = BlogData.find((post) => post.slug === resolvedParams.slug);
 
   if (!blog) {
     notFound();
