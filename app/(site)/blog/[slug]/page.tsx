@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import BlogData from "@/components/Blog/blogData";
 import RelatedPost from "@/components/Blog/RelatedPost";
 import SharePost from "@/components/Blog/SharePost";
+import { Blog } from "@/types/blog";
 
 interface BlogPageProps {
   params: {
@@ -12,46 +12,125 @@ interface BlogPageProps {
   };
 }
 
+// Transform API data to match frontend Blog type
+const transformBlogPost = (apiPost: any) => {
+  return {
+    _id: apiPost.post_id,
+    title: apiPost.title,
+    slug: apiPost.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    metadata: apiPost.excerpt,
+    body: apiPost.content || '',
+    mainImage: apiPost.thumbnail_url || '/images/blog/blog-01.png',
+    author: {
+      _id: 1, // Default author ID since API doesn't provide author details
+      name: apiPost.author_name,
+      image: '/images/user/user-01.png', // Default author image
+      bio: 'Community Member'
+    },
+    tags: [apiPost.Category?.category_name || 'General'],
+    publishedAt: apiPost.publish_date,
+    category: apiPost.Category?.category_name || 'General'
+  };
+};
+
 // Generate metadata for each blog post
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const blog = BlogData.find((post) => post.slug === resolvedParams.slug);
   
-  if (!blog) {
+  try {
+    const response = await fetch('http://localhost:4005/api/blogs', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const apiPosts = await response.json();
+    const blogPosts = apiPosts.map(transformBlogPost);
+    const blog = blogPosts.find((post) => post.slug === resolvedParams.slug);
+    
+    if (!blog) {
+      return {
+        title: "Blog Post Not Found",
+        description: "The requested blog post could not be found.",
+      };
+    }
+
+    return {
+      title: `${blog.title} - Agarwal Samaj Blog`,
+      description: blog.metadata || blog.title,
+      openGraph: {
+        title: blog.title,
+        description: blog.metadata || blog.title,
+        images: [blog.mainImage || "/images/blog/blog-01.png"],
+      },
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
     return {
       title: "Blog Post Not Found",
       description: "The requested blog post could not be found.",
     };
   }
-
-  return {
-    title: `${blog.title} - Agarwal Samaj Blog`,
-    description: blog.metadata || blog.title,
-    openGraph: {
-      title: blog.title,
-      description: blog.metadata || blog.title,
-      images: [blog.mainImage || "/images/blog/blog-01.png"],
-    },
-  };
 }
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
-  return BlogData.map((post) => ({
-    slug: post.slug,
-  }));
+  try {
+    const response = await fetch('http://localhost:4005/api/blogs', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const apiPosts = await response.json();
+    const blogPosts = apiPosts.map(transformBlogPost);
+    return blogPosts.map((post) => ({
+      slug: post.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
 
 const BlogPostPage = async ({ params }: BlogPageProps) => {
   const resolvedParams = await params;
-  const blog = BlogData.find((post) => post.slug === resolvedParams.slug);
+  
+  try {
+    const response = await fetch('http://localhost:4005/api/blogs', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
 
-  if (!blog) {
-    notFound();
-  }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-  // Format the body content with proper line breaks
-  const formatBodyContent = (body: string) => {
+    const apiPosts = await response.json();
+    const blogPosts = apiPosts.map(transformBlogPost);
+    const blog = blogPosts.find((post) => post.slug === resolvedParams.slug);
+
+    if (!blog) {
+      notFound();
+    }
+
+    // Format the body content with proper line breaks
+    const formatBodyContent = (body: string) => {
     return body.split('\n').map((line, index) => {
       if (line.trim() === '') {
         return <br key={index} />;
@@ -109,6 +188,11 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
     });
   };
 
+  // Get related posts (excluding current post)
+  const relatedPosts = blogPosts.filter(
+    (post) => post._id !== blog._id && post.category === blog.category
+  ).slice(0, 3);
+
   return (
     <>
       <section className="pb-20 pt-35 lg:pb-25 lg:pt-45 xl:pb-30 xl:pt-50">
@@ -161,7 +245,7 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
               </div>
 
               {/* Related Posts */}
-              <RelatedPost currentPost={blog} />
+              <RelatedPost currentPost={blog} allPosts={blogPosts} />
             </div>
 
             {/* Main Content */}
@@ -266,6 +350,10 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
       </section>
     </>
   );
+  } catch (error) {
+    console.error('Error loading blog post:', error);
+    notFound();
+  }
 };
 
 export default BlogPostPage;

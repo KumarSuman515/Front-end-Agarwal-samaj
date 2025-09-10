@@ -1,16 +1,92 @@
 "use client";
-import BlogData from "@/components/Blog/blogData";
 import BlogItem from "@/components/Blog/BlogItem";
 import { Blog } from "@/types/blog";
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+
+// Transform API data to match frontend Blog type
+const transformBlogPost = (apiPost: any) => {
+  return {
+    _id: apiPost.post_id,
+    title: apiPost.title,
+    slug: apiPost.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    metadata: apiPost.excerpt,
+    body: apiPost.content || '',
+    mainImage: apiPost.thumbnail_url || '/images/blog/blog-01.png',
+    author: {
+      _id: 1, // Default author ID since API doesn't provide author details
+      name: apiPost.author_name,
+      image: '/images/user/user-01.png', // Default author image
+      bio: 'Community Member'
+    },
+    tags: [apiPost.Category?.category_name || 'General'],
+    publishedAt: apiPost.publish_date,
+    category: apiPost.Category?.category_name || 'General'
+  };
+};
 
 const BlogPage = () => {
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [blogPosts, setBlogPosts] = useState<Blog[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const postsPerPage = 6;
+
+  // Fetch blog posts and categories
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const [postsResponse, categoriesResponse] = await Promise.all([
+          fetch('http://localhost:4005/api/blogs', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            cache: 'no-store',
+          }),
+          fetch('http://localhost:4005/api/blogs/categories', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            cache: 'no-store',
+          })
+        ]);
+        
+        if (!postsResponse.ok) {
+          throw new Error(`Failed to fetch blog posts: ${postsResponse.status}`);
+        }
+        if (!categoriesResponse.ok) {
+          throw new Error(`Failed to fetch categories: ${categoriesResponse.status}`);
+        }
+        
+        const [postsData, categoriesData] = await Promise.all([
+          postsResponse.json(),
+          categoriesResponse.json()
+        ]);
+        
+        const transformedPosts = postsData.map(transformBlogPost);
+        setBlogPosts(transformedPosts);
+        
+        const categoryNames = categoriesData.map((cat: any) => cat.category_name);
+        setCategories(categoryNames);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load blog posts');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Get category from URL params
   useEffect(() => {
@@ -22,7 +98,7 @@ const BlogPage = () => {
 
   // Filter and search posts
   const filteredPosts = useMemo(() => {
-    let filtered = BlogData;
+    let filtered = blogPosts;
 
     // Filter by category
     if (selectedCategory) {
@@ -42,19 +118,13 @@ const BlogPage = () => {
     }
 
     return filtered;
-  }, [searchTerm, selectedCategory]);
+  }, [searchTerm, selectedCategory, blogPosts]);
 
   // Pagination
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
   const startIndex = (currentPage - 1) * postsPerPage;
   const endIndex = startIndex + postsPerPage;
   const currentPosts = filteredPosts.slice(startIndex, endIndex);
-
-  // Get unique categories
-  const categories = useMemo(() => {
-    const cats = BlogData.map(post => post.category).filter(Boolean);
-    return Array.from(new Set(cats));
-  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,7 +249,33 @@ const BlogPage = () => {
       {/* Blog Grid */}
       <section className="pb-20">
         <div className="mx-auto max-w-c-1280 px-4 md:px-8 xl:px-0">
-          {currentPosts.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center dark:bg-gray-800">
+                <svg className="h-8 w-8 text-primary animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-black dark:text-white">Loading articles...</h3>
+              <p className="text-gray-600 dark:text-gray-300">Please wait while we fetch the latest content.</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-red-100 flex items-center justify-center dark:bg-red-900">
+                <svg className="h-8 w-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-black dark:text-white">Error loading articles</h3>
+              <p className="text-gray-600 dark:text-gray-300">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-4 text-primary hover:text-primary/80 transition-colors"
+              >
+                Try again
+              </button>
+            </div>
+          ) : currentPosts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2 lg:grid-cols-3 xl:gap-10">
                 {currentPosts.map((post, key) => (

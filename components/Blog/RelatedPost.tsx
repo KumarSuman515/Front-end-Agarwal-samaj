@@ -2,22 +2,22 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import BlogData from "./blogData";
 import { Blog } from "@/types/blog";
 
 interface RelatedPostProps {
   currentPost?: Blog;
+  allPosts?: Blog[];
   limit?: number;
 }
 
-const RelatedPost: React.FC<RelatedPostProps> = ({ currentPost, limit = 3 }) => {
+const RelatedPost: React.FC<RelatedPostProps> = ({ currentPost, allPosts = [], limit = 3 }) => {
   // Get related posts based on category or random selection
   const getRelatedPosts = () => {
-    let relatedPosts = BlogData;
+    let relatedPosts = allPosts;
     
     // If current post is provided, filter by category first
     if (currentPost && currentPost.category) {
-      const sameCategoryPosts = BlogData.filter(
+      const sameCategoryPosts = allPosts.filter(
         post => post.category === currentPost.category && post._id !== currentPost._id
       );
       
@@ -25,7 +25,7 @@ const RelatedPost: React.FC<RelatedPostProps> = ({ currentPost, limit = 3 }) => 
         relatedPosts = sameCategoryPosts;
       } else {
         // If not enough posts in same category, add other posts
-        const otherPosts = BlogData.filter(
+        const otherPosts = allPosts.filter(
           post => post.category !== currentPost.category && post._id !== currentPost._id
         );
         relatedPosts = [...sameCategoryPosts, ...otherPosts];
