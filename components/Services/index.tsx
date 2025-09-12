@@ -9,7 +9,7 @@ const Services = () => {
       title: "Community Gallery",
       description: "Explore and share photos from community events, celebrations, and gatherings. Connect through visual memories.",
       link: "/gallery",
-      color: "from-blue-500 to-blue-600"
+      color: "from-goldenrod to-darkgoldenrod"
     },
     {
       id: 2,
@@ -17,7 +17,7 @@ const Services = () => {
       title: "Matrimony Services",
       description: "Find your life partner within the trusted Agarwal Samaj community. Verified profiles and secure matchmaking.",
       link: "/matrimony",
-      color: "from-pink-500 to-pink-600"
+      color: "from-gold to-goldenrod"
     },
     {
       id: 3,
@@ -25,7 +25,7 @@ const Services = () => {
       title: "Community Classifieds",
       description: "Post and browse local classifieds, business opportunities, and community announcements.",
       link: "/classified",
-      color: "from-green-500 to-green-600"
+      color: "from-saddlebrown to-burlywood"
     },
     {
       id: 4,
@@ -33,7 +33,7 @@ const Services = () => {
       title: "Membership Programs",
       description: "Join our community with different membership tiers. Access exclusive benefits and networking opportunities.",
       link: "/membership",
-      color: "from-purple-500 to-purple-600"
+      color: "from-darkgoldenrod to-goldenrod"
     },
     {
       id: 5,
@@ -41,7 +41,7 @@ const Services = () => {
       title: "Community Blog",
       description: "Read and share articles about community news, cultural insights, and member stories.",
       link: "/blog",
-      color: "from-orange-500 to-orange-600"
+      color: "from-burlywood to-wheat"
     },
     {
       id: 6,
@@ -49,7 +49,7 @@ const Services = () => {
       title: "Contact & Support",
       description: "Get in touch with community leaders, ask questions, and get support when you need it.",
       link: "/support",
-      color: "from-indigo-500 to-indigo-600"
+      color: "from-wheat to-cream"
     }
   ];
 
@@ -76,7 +76,7 @@ const Services = () => {
                     {service.icon}
                   </div>
                   
-                  <h3 className="text-2xl font-bold text-black dark:text-white mb-4 group-hover:text-primary transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-black dark:text-white mb-4 group-hover:text-goldenrod transition-colors duration-300">
                     {service.title}
                   </h3>
                   
@@ -86,7 +86,7 @@ const Services = () => {
                   
                   <a
                     href={service.link}
-                    className="inline-flex items-center text-primary font-semibold hover:text-primaryho transition-colors duration-300 group/link"
+                    className="inline-flex items-center text-goldenrod font-semibold hover:text-darkgoldenrod transition-colors duration-300 group/link"
                   >
                     Learn More
                     <svg className="w-5 h-5 ml-2 group-hover/link:translate-x-1 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">

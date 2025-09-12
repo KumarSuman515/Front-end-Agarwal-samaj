@@ -64,7 +64,7 @@ const Hero = () => {
       <section className="overflow-hidden relative">
         <div className="w-full">
           <div className="relative w-full h-[360px] sm:h-[420px] md:h-[520px] lg:h-[620px] xl:h-[720px]">
-            <div className="w-full h-full bg-gradient-to-br from-primary/20 via-meta/20 to-primary/30 relative overflow-hidden flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-goldenrod/20 via-gold/20 to-darkgoldenrod/30 relative overflow-hidden flex items-center justify-center">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
                 <p className="text-white text-lg">Loading slider images...</p>
@@ -82,7 +82,7 @@ const Hero = () => {
       <section className="overflow-hidden relative">
         <div className="w-full">
           <div className="relative w-full h-[360px] sm:h-[420px] md:h-[520px] lg:h-[620px] xl:h-[720px]">
-            <div className="w-full h-full bg-gradient-to-br from-primary/20 via-meta/20 to-primary/30 relative overflow-hidden flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-goldenrod/20 via-gold/20 to-darkgoldenrod/30 relative overflow-hidden flex items-center justify-center">
               <div className="text-center">
                 <div className="text-6xl md:text-7xl mb-6 select-none">📸</div>
                 <h3 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg leading-tight">
@@ -132,7 +132,7 @@ const Hero = () => {
                     />
                   ) : (
                     // Fallback gradient background
-                    <div className="w-full h-full bg-gradient-to-br from-primary/20 via-meta/20 to-primary/30 relative overflow-hidden">
+                    <div className="w-full h-full bg-gradient-to-br from-goldenrod/20 via-gold/20 to-darkgoldenrod/30 relative overflow-hidden">
                       {/* Animated background pattern */}
                       <div className="absolute inset-0 opacity-10">
                         <div className="absolute top-10 left-10 w-20 h-20 bg-white rounded-full animate-pulse"></div>
@@ -197,7 +197,7 @@ const Hero = () => {
               aria-label="Previous slide"
               className="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-effect hover:scale-110 transition-all duration-300 flex items-center justify-center group"
             >
-              <svg className="w-6 h-6 text-primary group-hover:text-primaryho transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-6 h-6 text-goldenrod group-hover:text-darkgoldenrod transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
             </button>
@@ -206,7 +206,7 @@ const Hero = () => {
               aria-label="Next slide"
               className="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full glass-effect hover:scale-110 transition-all duration-300 flex items-center justify-center group"
             >
-              <svg className="w-6 h-6 text-primary group-hover:text-primaryho transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-6 h-6 text-goldenrod group-hover:text-darkgoldenrod transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
               </svg>
             </button>

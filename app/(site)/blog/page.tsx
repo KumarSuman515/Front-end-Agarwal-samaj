@@ -1,7 +1,7 @@
 "use client";
 import BlogItem from "@/components/Blog/BlogItem";
 import { Blog } from "@/types/blog";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 // Transform API data to match frontend Blog type
@@ -25,7 +25,8 @@ const transformBlogPost = (apiPost: any) => {
   };
 };
 
-const BlogPage = () => {
+// Component that uses useSearchParams
+const BlogContent = () => {
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -350,6 +351,27 @@ const BlogPage = () => {
         </div>
       </section>
     </>
+  );
+};
+
+// Main component with Suspense boundary
+const BlogPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center dark:bg-gray-800">
+            <svg className="h-8 w-8 text-primary animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </div>
+          <h3 className="mb-2 text-lg font-semibold text-black dark:text-white">Loading...</h3>
+          <p className="text-gray-600 dark:text-gray-300">Please wait while we load the blog.</p>
+        </div>
+      </div>
+    }>
+      <BlogContent />
+    </Suspense>
   );
 };
 

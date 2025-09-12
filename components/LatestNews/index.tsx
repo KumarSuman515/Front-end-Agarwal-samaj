@@ -60,6 +60,16 @@ const LatestNews = async () => {
       author_name: 'अमित सिंह',
       Category: { category_name: 'खेल' },
       publish_date: '2024-01-13T09:20:00Z'
+    },
+    {
+      post_id: 'news4',
+      title: 'विज्ञान और प्रौद्योगिकी में नई खोज',
+      excerpt: 'भारतीय वैज्ञानिकों ने एक बड़ी वैज्ञानिक खोज की है जो दुनिया भर में चर्चा का विषय बनी है।',
+      content: 'विस्तृत समाचार सामग्री...',
+      thumbnail_url: '/images/blog/blog-04.png',
+      author_name: 'डॉ. प्रिया शर्मा',
+      Category: { category_name: 'विज्ञान' },
+      publish_date: '2024-01-12T14:15:00Z'
     }
   ];
 
@@ -108,9 +118,9 @@ const LatestNews = async () => {
   }
 
   return (
-    <section id="latest-news" className="px-4 md:px-8 2xl:px-0">
+    <section id="latest-news" className="px-4 md:px-8 2xl:px-0h-[80vh]">
       <div className="relative mx-auto max-w-c-1390 px-7.5 py-8 lg:px-15 xl:px-20">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-10 h-[28rem]">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-10 h-[85vh]">
           {/* 70% width main featured blog section */}
           <div className="lg:col-span-7 rounded-2xl bg-gray-900 p-3 text-white md:p-4 h-full flex flex-col">
             <h1 className="mb-3 text-center text-2xl font-extrabold md:mb-4 md:text-3xl">
@@ -213,7 +223,7 @@ const LatestNews = async () => {
             ) : (
               <ul className="flex-1 space-y-4 overflow-y-auto">
                 {/* Show only news posts */}
-                {newsPosts.slice(0, 3).map((post, index) => (
+                {newsPosts.slice(0, 4).map((post, index) => (
                   <li key={post._id} className="flex items-start space-x-4">
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-300">
                       <Image

@@ -2,9 +2,9 @@ import React from "react";
 import AlbumDetail from "@/components/Gallery/AlbumDetail";
 
 interface GalleryPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 const GalleryPage = async ({ params }: GalleryPageProps) => {

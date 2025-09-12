@@ -87,7 +87,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/"
-                        className="mb-3 inline-block hover:text-primary"
+                        className="mb-3 inline-block hover:text-goldenrod"
                       >
                         Home
                       </a>
@@ -95,7 +95,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/matrimony"
-                        className="mb-3 inline-block hover:text-primary"
+                        className="mb-3 inline-block hover:text-goldenrod"
                       >
                         Matrimony
                       </a>
@@ -103,7 +103,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/classified"
-                        className="mb-3 inline-block hover:text-primary"
+                        className="mb-3 inline-block hover:text-goldenrod"
                       >
                         Classifieds
                       </a>
@@ -111,7 +111,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/membership"
-                        className="mb-3 inline-block hover:text-primary"
+                        className="mb-3 inline-block hover:text-goldenrod"
                       >
                         Membership
                       </a>
@@ -145,7 +145,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/about"
-                        className="mb-3 inline-block hover:text-primary"
+                        className="mb-3 inline-block hover:text-goldenrod"
                       >
                         About Us
                       </a>
@@ -153,7 +153,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/blog"
-                        className="mb-3 inline-block hover:text-primary"
+                        className="mb-3 inline-block hover:text-goldenrod"
                       >
                         Blog
                       </a>
@@ -161,7 +161,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/support"
-                        className="mb-3 inline-block hover:text-primary"
+                        className="mb-3 inline-block hover:text-goldenrod"
                       >
                         Help & Support
                       </a>
@@ -169,7 +169,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/contact"
-                        className="mb-3 inline-block hover:text-primary"
+                        className="mb-3 inline-block hover:text-goldenrod"
                       >
                         Contact Us
                       </a>
@@ -327,7 +327,7 @@ const Footer = () => {
                 <li>
                   <a href="#" aria-label="social icon">
                     <svg
-                      className="fill-[#D1D8E0] transition-all duration-300 hover:fill-primary"
+                      className="fill-[#D1D8E0] transition-all duration-300 hover:fill-goldenrod"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -351,7 +351,7 @@ const Footer = () => {
                 <li>
                   <a href="#" aria-label="social icon">
                     <svg
-                      className="fill-[#D1D8E0] transition-all duration-300 hover:fill-primary"
+                      className="fill-[#D1D8E0] transition-all duration-300 hover:fill-goldenrod"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -375,7 +375,7 @@ const Footer = () => {
                 <li>
                   <a href="#" aria-label="social icon">
                     <svg
-                      className="fill-[#D1D8E0] transition-all duration-300 hover:fill-primary"
+                      className="fill-[#D1D8E0] transition-all duration-300 hover:fill-goldenrod"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -399,7 +399,7 @@ const Footer = () => {
                 <li>
                   <a href="#" aria-label="social icon">
                     <svg
-                      className="fill-[#D1D8E0] transition-all duration-300 hover:fill-primary"
+                      className="fill-[#D1D8E0] transition-all duration-300 hover:fill-goldenrod"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"

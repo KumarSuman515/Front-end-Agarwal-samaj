@@ -7,9 +7,9 @@ import SharePost from "@/components/Blog/SharePost";
 import { Blog } from "@/types/blog";
 
 interface BlogPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 // Transform API data to match frontend Blog type

@@ -35,7 +35,7 @@ const BlogItem = ({ blog }: { blog: Blog }) => {
           {/* Category and Date */}
           <div className="mt-4 mb-2 flex items-center justify-between text-sm text-gray-500">
             {category && (
-              <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
+              <span className="inline-block rounded-full bg-gold/20 px-3 py-1 text-xs font-medium text-goldenrod">
                 {category}
               </span>
             )}
@@ -66,7 +66,7 @@ const BlogItem = ({ blog }: { blog: Blog }) => {
             </div>
           )}
 
-          <h3 className="mb-3.5 mt-2 line-clamp-2 text-lg font-medium text-black duration-300 hover:text-primary dark:text-white dark:hover:text-primary xl:text-itemtitle2">
+          <h3 className="mb-3.5 mt-2 line-clamp-2 text-lg font-medium text-black duration-300 hover:text-goldenrod dark:text-white dark:hover:text-goldenrod xl:text-itemtitle2">
             <Link href={`/blog/${slug}`} className="hover:underline">
               {title}
             </Link>
@@ -77,7 +77,7 @@ const BlogItem = ({ blog }: { blog: Blog }) => {
           <div className="mt-4">
             <Link 
               href={`/blog/${slug}`}
-              className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              className="inline-flex items-center text-sm font-medium text-goldenrod hover:text-darkgoldenrod transition-colors"
             >
               Read More
               <svg className="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

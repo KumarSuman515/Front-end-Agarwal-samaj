@@ -1,26 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import SectionHeader from "@/components/Common/SectionHeader";
+import MembershipForm from "./MembershipForm";
 
 const Membership = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
-  
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    pincode: '',
-    occupation: '',
-    age: '',
-    gender: '',
-    emergencyContact: '',
-    emergencyPhone: ''
-  });
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const membershipPlan = {
       id: 1,
@@ -75,129 +59,6 @@ const Membership = () => {
     }
   ];
 
-  // Form validation
-  const validateForm = (): boolean => {
-    const newErrors: {[key: string]: string} = {};
-    
-    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
-    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-    else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) newErrors.phone = 'Phone number must be 10 digits';
-    if (!formData.address.trim()) newErrors.address = 'Address is required';
-    if (!formData.city.trim()) newErrors.city = 'City is required';
-    if (!formData.state.trim()) newErrors.state = 'State is required';
-    if (!formData.pincode.trim()) newErrors.pincode = 'Pincode is required';
-    else if (!/^\d{6}$/.test(formData.pincode)) newErrors.pincode = 'Pincode must be 6 digits';
-    if (!formData.age.trim()) newErrors.age = 'Age is required';
-    if (!formData.gender.trim()) newErrors.gender = 'Gender is required';
-    if (!formData.emergencyContact.trim()) newErrors.emergencyContact = 'Emergency contact is required';
-    if (!formData.emergencyPhone.trim()) newErrors.emergencyPhone = 'Emergency phone is required';
-    else if (!/^\d{10}$/.test(formData.emergencyPhone.replace(/\D/g, ''))) newErrors.emergencyPhone = 'Emergency phone must be 10 digits';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // Handle form input changes
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  // Paytm Payment Integration
-  const initiatePaytmPayment = async () => {
-    try {
-      setIsLoading(true);
-      
-      // Generate unique order ID
-      const orderId = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // Prepare payment data
-      const paymentData = {
-        orderId: orderId,
-        amount: membershipPlan.price.replace('₹', '').replace(',', ''),
-        customerId: formData.email,
-        customerName: `${formData.firstName} ${formData.lastName}`,
-        customerEmail: formData.email,
-        customerPhone: formData.phone,
-        planName: membershipPlan.name,
-        planDuration: membershipPlan.duration,
-        memberData: {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          pincode: formData.pincode,
-          occupation: formData.occupation,
-          age: formData.age,
-          gender: formData.gender,
-          emergencyContact: formData.emergencyContact,
-          emergencyPhone: formData.emergencyPhone
-        }
-      };
-
-      console.log('Payment Data:', paymentData);
-      
-      // Simulate API call to backend
-      const response = await fetch('/api/membership/payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(paymentData),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        // Redirect to Paytm payment page
-        if (result.paymentUrl) {
-          window.location.href = result.paymentUrl;
-        } else {
-          alert('Payment initiated successfully! Check your email for confirmation.');
-        }
-      } else {
-        throw new Error('Payment initiation failed');
-      }
-    } catch (error) {
-      console.error('Payment error:', error);
-      alert('Payment failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
-    await initiatePaytmPayment();
-  };
-
-  // Scroll to registration form
-  const scrollToRegistrationForm = () => {
-    const formSection = document.getElementById('registration-form');
-    if (formSection) {
-      // Add a small delay to ensure smooth animation
-      setTimeout(() => {
-        formSection.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }, 100);
-    }
-  };
 
 
   return (
@@ -376,10 +237,10 @@ const Membership = () => {
                       </div>
                       
                       <button 
-                        onClick={scrollToRegistrationForm}
+                        onClick={() => setIsFormOpen(true)}
                         className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 shadow-lg animate-bounce"
                       >
-                        Get Started Now
+                        Register for Membership
                       </button>
                     </div>
                   </div>
@@ -388,223 +249,16 @@ const Membership = () => {
             </div>
           </div>
 
-          {/* Membership Registration Form */}
-          <div id="registration-form" className="mt-20">
-            <h2 className="mb-12 text-center text-3xl font-bold text-gray-900">
-              Complete Your Membership Registration
-            </h2>
-            
-            <div className="max-w-4xl mx-auto">
-              <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Personal Information */}
-                <div className="bg-gray-50 rounded-xl p-8">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-6">Personal Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <input
-                        type="text"
-                        placeholder="First Name *"
-                        value={formData.firstName}
-                        onChange={(e) => handleInputChange('firstName', e.target.value)}
-                        className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.firstName ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      />
-                      {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
-                    </div>
-                    <div>
-                      <input
-                        type="text"
-                        placeholder="Last Name *"
-                        value={formData.lastName}
-                        onChange={(e) => handleInputChange('lastName', e.target.value)}
-                        className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.lastName ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      />
-                      {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
-                    </div>
-                    <div>
-                      <input
-                        type="email"
-                        placeholder="Email Address *"
-                        value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.email ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      />
-                      {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                    </div>
-                    <div>
-                      <input
-                        type="tel"
-                        placeholder="Phone Number *"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.phone ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      />
-                      {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-                    </div>
-                    <div>
-                      <select
-                        value={formData.gender}
-                        onChange={(e) => handleInputChange('gender', e.target.value)}
-                        className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.gender ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      >
-                        <option value="">Select Gender *</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                      </select>
-                      {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
-                    </div>
-                    <div>
-                      <input
-                        type="number"
-                        placeholder="Age *"
-                        value={formData.age}
-                        onChange={(e) => handleInputChange('age', e.target.value)}
-                        className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.age ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      />
-                      {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
-                    </div>
-                    <div className="md:col-span-2">
-                      <input
-                        type="text"
-                        placeholder="Occupation"
-                        value={formData.occupation}
-                        onChange={(e) => handleInputChange('occupation', e.target.value)}
-                        className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Address Information */}
-                <div className="bg-gray-50 rounded-xl p-8">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-6">Address Information</h3>
-                  <div className="space-y-6">
-                    <div>
-                      <textarea
-                        placeholder="Full Address *"
-                        value={formData.address}
-                        onChange={(e) => handleInputChange('address', e.target.value)}
-                        rows={3}
-                        className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.address ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      />
-                      {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="City *"
-                          value={formData.city}
-                          onChange={(e) => handleInputChange('city', e.target.value)}
-                          className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            errors.city ? 'border-red-500' : 'border-gray-300'
-                          }`}
-                        />
-                        {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="State *"
-                          value={formData.state}
-                          onChange={(e) => handleInputChange('state', e.target.value)}
-                          className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            errors.state ? 'border-red-500' : 'border-gray-300'
-                          }`}
-                        />
-                        {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="Pincode *"
-                          value={formData.pincode}
-                          onChange={(e) => handleInputChange('pincode', e.target.value)}
-                          className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            errors.pincode ? 'border-red-500' : 'border-gray-300'
-                          }`}
-                        />
-                        {errors.pincode && <p className="text-red-500 text-sm mt-1">{errors.pincode}</p>}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Emergency Contact */}
-                <div className="bg-gray-50 rounded-xl p-8">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-6">Emergency Contact</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <input
-                        type="text"
-                        placeholder="Emergency Contact Name *"
-                        value={formData.emergencyContact}
-                        onChange={(e) => handleInputChange('emergencyContact', e.target.value)}
-                        className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.emergencyContact ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      />
-                      {errors.emergencyContact && <p className="text-red-500 text-sm mt-1">{errors.emergencyContact}</p>}
-                    </div>
-                    <div>
-                      <input
-                        type="tel"
-                        placeholder="Emergency Contact Phone *"
-                        value={formData.emergencyPhone}
-                        onChange={(e) => handleInputChange('emergencyPhone', e.target.value)}
-                        className={`w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.emergencyPhone ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      />
-                      {errors.emergencyPhone && <p className="text-red-500 text-sm mt-1">{errors.emergencyPhone}</p>}
-                    </div>
-                  </div>
-                </div>
-
-
-                {/* Submit Button */}
-                <div className="text-center">
-                  <button 
-                    type="submit"
-                    disabled={isLoading}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 px-12 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center justify-center space-x-2">
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Processing Registration...</span>
-                      </div>
-                    ) : (
-                      `Complete Registration & Pay ${membershipPlan.price}`
-                    )}
-                  </button>
-                  
-                  <p className="text-xs text-gray-500 mt-4">
-                    By completing this registration, you agree to our terms of service and privacy policy.
-                    Payment will be processed securely through Paytm.
-                  </p>
-                </div>
-              </form>
-            </div>
-          </div>
 
         
         </div>
       </section>
+      
+      {/* Membership Form Modal */}
+      <MembershipForm 
+        isOpen={isFormOpen} 
+        onClose={() => setIsFormOpen(false)} 
+      />
     </>
   );
 };
