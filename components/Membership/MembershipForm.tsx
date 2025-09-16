@@ -34,11 +34,150 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
     membershipFee: ""
   });
 
+  const [uploadedFiles, setUploadedFiles] = useState({
+    husbandIdCard: null as File | null,
+    wifeIdCard: null as File | null
+  });
+
+  const [uploadedPhotos, setUploadedPhotos] = useState({
+    husbandPhoto: null as File | null,
+    wifePhoto: null as File | null
+  });
+
+  const [dragStates, setDragStates] = useState({
+    husbandIdCard: false,
+    wifeIdCard: false,
+    husbandPhoto: false,
+    wifePhoto: false
+  });
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  // File validation function
+  const validateFile = (file: File): boolean => {
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please upload only PDF, JPG, or PNG files.');
+      return false;
+    }
+    
+    if (file.size > maxSize) {
+      alert('File size should not exceed 5MB.');
+      return false;
+    }
+    
+    return true;
+  };
+
+  // Photo validation function
+  const validatePhoto = (file: File): boolean => {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    const maxSize = 3 * 1024 * 1024; // 3MB for photos
+    
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please upload only JPG or PNG image files for photos.');
+      return false;
+    }
+    
+    if (file.size > maxSize) {
+      alert('Photo size should not exceed 3MB.');
+      return false;
+    }
+    
+    return true;
+  };
+
+  // Handle file upload
+  const handleFileUpload = (file: File, fieldName: 'husbandIdCard' | 'wifeIdCard') => {
+    if (validateFile(file)) {
+      setUploadedFiles(prev => ({
+        ...prev,
+        [fieldName]: file
+      }));
+    }
+  };
+
+  // Handle photo upload
+  const handlePhotoUpload = (file: File, fieldName: 'husbandPhoto' | 'wifePhoto') => {
+    if (validatePhoto(file)) {
+      setUploadedPhotos(prev => ({
+        ...prev,
+        [fieldName]: file
+      }));
+    }
+  };
+
+  // Handle drag and drop
+  const handleDragOver = (e: React.DragEvent, fieldName: 'husbandIdCard' | 'wifeIdCard' | 'husbandPhoto' | 'wifePhoto') => {
+    e.preventDefault();
+    setDragStates(prev => ({
+      ...prev,
+      [fieldName]: true
+    }));
+  };
+
+  const handleDragLeave = (e: React.DragEvent, fieldName: 'husbandIdCard' | 'wifeIdCard' | 'husbandPhoto' | 'wifePhoto') => {
+    e.preventDefault();
+    setDragStates(prev => ({
+      ...prev,
+      [fieldName]: false
+    }));
+  };
+
+  const handleDrop = (e: React.DragEvent, fieldName: 'husbandIdCard' | 'wifeIdCard' | 'husbandPhoto' | 'wifePhoto') => {
+    e.preventDefault();
+    setDragStates(prev => ({
+      ...prev,
+      [fieldName]: false
+    }));
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      if (fieldName === 'husbandIdCard' || fieldName === 'wifeIdCard') {
+        handleFileUpload(files[0], fieldName);
+      } else {
+        handlePhotoUpload(files[0], fieldName);
+      }
+    }
+  };
+
+  // Handle file input change
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: 'husbandIdCard' | 'wifeIdCard') => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleFileUpload(files[0], fieldName);
+    }
+  };
+
+  // Handle photo input change
+  const handlePhotoInputChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: 'husbandPhoto' | 'wifePhoto') => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handlePhotoUpload(files[0], fieldName);
+    }
+  };
+
+  // Remove uploaded file
+  const removeFile = (fieldName: 'husbandIdCard' | 'wifeIdCard') => {
+    setUploadedFiles(prev => ({
+      ...prev,
+      [fieldName]: null
+    }));
+  };
+
+  // Remove uploaded photo
+  const removePhoto = (fieldName: 'husbandPhoto' | 'wifePhoto') => {
+    setUploadedPhotos(prev => ({
+      ...prev,
+      [fieldName]: null
     }));
   };
 
@@ -49,15 +188,61 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
       alert("Please select a membership fee option.");
       return;
     }
+
+    // Check if ID card files are uploaded
+    if (!uploadedFiles.husbandIdCard) {
+      alert("Please upload Husband's Government ID card.");
+      return;
+    }
+
+    // Check if husband's photo is uploaded
+    if (!uploadedPhotos.husbandPhoto) {
+      alert("Please upload Husband's photo.");
+      return;
+    }
     
     const selectedAmount = parseInt(formData.membershipFee);
     const membershipType = selectedAmount === 21000 ? "Patron" : "Life Member";
     
+    // Create FormData for file upload
+    const submitData = new FormData();
+    
+    // Add form data
+    Object.keys(formData).forEach(key => {
+      submitData.append(key, formData[key as keyof typeof formData]);
+    });
+    
+    // Add files
+    if (uploadedFiles.husbandIdCard) {
+      submitData.append('husbandIdCard', uploadedFiles.husbandIdCard);
+    }
+    if (uploadedFiles.wifeIdCard) {
+      submitData.append('wifeIdCard', uploadedFiles.wifeIdCard);
+    }
+    
+    // Add photos
+    if (uploadedPhotos.husbandPhoto) {
+      submitData.append('husbandPhoto', uploadedPhotos.husbandPhoto);
+    }
+    if (uploadedPhotos.wifePhoto) {
+      submitData.append('wifePhoto', uploadedPhotos.wifePhoto);
+    }
+    
     console.log("Form submitted:", formData);
+    console.log("Files uploaded:", uploadedFiles);
+    console.log("Photos uploaded:", uploadedPhotos);
     console.log(`Selected: ${membershipType} - Rs. ${selectedAmount.toLocaleString()}/-`);
     
-    // Here you would typically send the data to your backend
-    alert(`Membership application submitted successfully!\nSelected: ${membershipType} - Rs. ${selectedAmount.toLocaleString()}/-`);
+    // Here you would typically send the FormData to your backend
+    // Example: await fetch('/api/membership', { method: 'POST', body: submitData });
+    
+    const uploadedItems: string[] = [];
+    if (uploadedFiles.husbandIdCard) uploadedItems.push(`Husband ID: ${uploadedFiles.husbandIdCard.name}`);
+    if (uploadedFiles.wifeIdCard) uploadedItems.push(`Wife ID: ${uploadedFiles.wifeIdCard.name}`);
+    if (uploadedPhotos.husbandPhoto) uploadedItems.push(`Husband Photo: ${uploadedPhotos.husbandPhoto.name}`);
+    if (uploadedPhotos.wifePhoto) uploadedItems.push(`Wife Photo: ${uploadedPhotos.wifePhoto.name}`);
+    
+    alert(`Membership application submitted successfully!\nSelected: ${membershipType} - Rs. ${selectedAmount.toLocaleString()}/-\nUploaded: ${uploadedItems.join(', ')}`);
     onClose();
   };
 
@@ -74,7 +259,7 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
           ×
         </button>
         {/* Header */}
-        <div className="bg-white p-4 rounded-t-lg border-b-2 border-gray-200">
+        <div className="bg-white p-4 rounded-t-lg border-b-2 border-gray-200 mt-4">
           <div className="flex items-start space-x-6">
             {/* Logo Section */}
             <div className="flex-shrink-0">
@@ -88,12 +273,12 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
             </div>
             
             {/* Organization Details */}
-            <div className="flex-1 mt-6">
+            <div className="flex-1 mt-2 space-y-0">
               <h1 className="text-3xl font-bold text-blue-900 mb-3 leading-tight">
                 AKHIL BHARTIYA AGRAWAL SAMMELAN
               </h1>
               
-              <div className="space-y-1 text-sm">
+              <div className="space-y-0.5 text-sm">
                 <p className="text-red-600 font-medium">
                   (Registered under Societies Registration Act 1860 vide No. 7953 dated 28 January 1976)
                 </p>
@@ -110,11 +295,13 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
         </div>
-        <div className="w-full bg-red-500 mb-4" style={{height: "1px"}}></div>
+        <div className="w-full bg-red-500 h-px"></div>
+
+
         {/* Form Title */}
-        <div className="flex justify-center mb-4">
-          <div className="bg-pink-500 text-white px-6 py-3 rounded-lg inline-block">
-            <h2 className="text-2xl font-bold">APPLICATION-FORM 'K'</h2>
+        <div className="flex justify-center mb-2">
+          <div className="bg-pink-500 text-white px-6 py-3 rounded-lg inline-block mt-4 ">
+            <h2 className="text-2xl font-bold ">APPLICATION-FORM 'K'</h2>
           </div>
         </div>
         
@@ -127,26 +314,9 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
         
 
         {/* Form Content */}
-        <div className="p-6">
-          {/* Membership Number and Photo Instructions */}
-          {/* <div className="flex justify-end mb-6">
-            <div className="bg-pink-50 border border-pink-300 p-4 rounded-lg w-72">
-              <div className="text-center mb-3">
-                <label className="block text-sm text-pink-600 font-medium mb-2">Membership Number</label>
-                <input
-                  type="text"
-                  name="membershipNumber"
-                  value={formData.membershipNumber}
-                  onChange={handleInputChange}
-                  className="w-full border border-pink-300 rounded px-3 py-2 text-center font-medium"
-                  placeholder="Auto-generated"
-                />
-              </div>
-              <p className="text-xs text-pink-600 text-center leading-relaxed">
-                Please attach 2 colour photographs each of you and your wife (Please do not staple)
-              </p>
-            </div>
-          </div> */}
+        <div className="p-4">
+         
+          
 
           {/* Introduction */}
           <div className="mb-8">
@@ -195,30 +365,302 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* ID Card Fields */}
+              {/* ID Card Upload Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                {/* Husband ID Card Upload */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Government Identity Card:- Aadhar/PAN/Passport/Driving License No. (Hus.)
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Government Identity Card Upload (Husband) *
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">Aadhar/PAN/Passport/Driving License (PDF, JPG, PNG - Max 5MB)</p>
+                  
+                  {uploadedFiles.husbandIdCard ? (
+                    <div className="border-2 border-green-300 bg-green-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex-shrink-0">
+                            {uploadedFiles.husbandIdCard.type.startsWith('image/') ? (
+                              <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            ) : (
+                              <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                              </svg>
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-green-800">{uploadedFiles.husbandIdCard.name}</p>
+                            <p className="text-xs text-green-600">{(uploadedFiles.husbandIdCard.size / 1024 / 1024).toFixed(2)} MB</p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeFile('husbandIdCard')}
+                          className="text-red-600 hover:text-red-800 transition-colors"
+                        >
+                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                        dragStates.husbandIdCard
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-300 hover:border-gray-400'
+                      }`}
+                      onDragOver={(e) => handleDragOver(e, 'husbandIdCard')}
+                      onDragLeave={(e) => handleDragLeave(e, 'husbandIdCard')}
+                      onDrop={(e) => handleDrop(e, 'husbandIdCard')}
+                    >
+                      <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <div className="mt-4">
+                        <label htmlFor="husbandIdCard" className="cursor-pointer">
+                          <span className="mt-2 block text-sm font-medium text-gray-900">
+                            Click to upload or drag and drop
+                          </span>
+                          <span className="mt-1 block text-xs text-gray-500">
+                            PDF, JPG, PNG up to 5MB
+                          </span>
                   </label>
                   <input
-                    type="text"
+                          id="husbandIdCard"
                     name="husbandIdCard"
-                    value={formData.husbandIdCard}
-                    onChange={handleInputChange}
-                    className="w-full border-b-2 border-dotted border-gray-400 px-2 py-1 focus:border-blue-500 focus:outline-none"
-                    required
-                  />
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => handleFileInputChange(e, 'husbandIdCard')}
+                          className="sr-only"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
+
+                {/* Wife ID Card Upload */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">(Wife)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Government Identity Card Upload (Wife)
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">Aadhar/PAN/Passport/Driving License (PDF, JPG, PNG - Max 5MB)</p>
+                  
+                  {uploadedFiles.wifeIdCard ? (
+                    <div className="border-2 border-green-300 bg-green-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex-shrink-0">
+                            {uploadedFiles.wifeIdCard.type.startsWith('image/') ? (
+                              <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            ) : (
+                              <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                              </svg>
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-green-800">{uploadedFiles.wifeIdCard.name}</p>
+                            <p className="text-xs text-green-600">{(uploadedFiles.wifeIdCard.size / 1024 / 1024).toFixed(2)} MB</p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeFile('wifeIdCard')}
+                          className="text-red-600 hover:text-red-800 transition-colors"
+                        >
+                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                        dragStates.wifeIdCard
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-300 hover:border-gray-400'
+                      }`}
+                      onDragOver={(e) => handleDragOver(e, 'wifeIdCard')}
+                      onDragLeave={(e) => handleDragLeave(e, 'wifeIdCard')}
+                      onDrop={(e) => handleDrop(e, 'wifeIdCard')}
+                    >
+                      <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <div className="mt-4">
+                        <label htmlFor="wifeIdCard" className="cursor-pointer">
+                          <span className="mt-2 block text-sm font-medium text-gray-900">
+                            Click to upload or drag and drop
+                          </span>
+                          <span className="mt-1 block text-xs text-gray-500">
+                            PDF, JPG, PNG up to 5MB
+                          </span>
+                        </label>
                   <input
-                    type="text"
+                          id="wifeIdCard"
                     name="wifeIdCard"
-                    value={formData.wifeIdCard}
-                    onChange={handleInputChange}
-                    className="w-full border-b-2 border-dotted border-gray-400 px-2 py-1 focus:border-blue-500 focus:outline-none"
-                  />
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => handleFileInputChange(e, 'wifeIdCard')}
+                          className="sr-only"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Photo Upload Fields */}
+              <div className="mb-6">
+                <h3 className="text-lg font-bold mb-4">Membership Photos:</h3>
+                <p className="text-sm text-gray-600 mb-4">Please upload 2 colour photographs each of you and your wife (Please do not staple)</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Husband Photo Upload */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Husband's Photo *
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">JPG, PNG - Max 3MB</p>
+                    
+                    {uploadedPhotos.husbandPhoto ? (
+                      <div className="border-2 border-green-300 bg-green-50 rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex-shrink-0">
+                              <img
+                                src={URL.createObjectURL(uploadedPhotos.husbandPhoto)}
+                                alt="Husband Photo Preview"
+                                className="w-16 h-16 object-cover rounded-lg border-2 border-green-300"
+                              />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-green-800">{uploadedPhotos.husbandPhoto.name}</p>
+                              <p className="text-xs text-green-600">{(uploadedPhotos.husbandPhoto.size / 1024 / 1024).toFixed(2)} MB</p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removePhoto('husbandPhoto')}
+                            className="text-red-600 hover:text-red-800 transition-colors"
+                          >
+                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                          dragStates.husbandPhoto
+                            ? 'border-blue-500 bg-blue-50'
+                            : 'border-gray-300 hover:border-gray-400'
+                        }`}
+                        onDragOver={(e) => handleDragOver(e, 'husbandPhoto')}
+                        onDragLeave={(e) => handleDragLeave(e, 'husbandPhoto')}
+                        onDrop={(e) => handleDrop(e, 'husbandPhoto')}
+                      >
+                        <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <div className="mt-4">
+                          <label htmlFor="husbandPhoto" className="cursor-pointer">
+                            <span className="mt-2 block text-sm font-medium text-gray-900">
+                              Click to upload or drag and drop
+                            </span>
+                            <span className="mt-1 block text-xs text-gray-500">
+                              JPG, PNG up to 3MB
+                            </span>
+                          </label>
+                          <input
+                            id="husbandPhoto"
+                            name="husbandPhoto"
+                            type="file"
+                            accept=".jpg,.jpeg,.png"
+                            onChange={(e) => handlePhotoInputChange(e, 'husbandPhoto')}
+                            className="sr-only"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Wife Photo Upload */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Wife's Photo
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">JPG, PNG - Max 3MB</p>
+                    
+                    {uploadedPhotos.wifePhoto ? (
+                      <div className="border-2 border-green-300 bg-green-50 rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex-shrink-0">
+                              <img
+                                src={URL.createObjectURL(uploadedPhotos.wifePhoto)}
+                                alt="Wife Photo Preview"
+                                className="w-16 h-16 object-cover rounded-lg border-2 border-green-300"
+                              />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-green-800">{uploadedPhotos.wifePhoto.name}</p>
+                              <p className="text-xs text-green-600">{(uploadedPhotos.wifePhoto.size / 1024 / 1024).toFixed(2)} MB</p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removePhoto('wifePhoto')}
+                            className="text-red-600 hover:text-red-800 transition-colors"
+                          >
+                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                          dragStates.wifePhoto
+                            ? 'border-blue-500 bg-blue-50'
+                            : 'border-gray-300 hover:border-gray-400'
+                        }`}
+                        onDragOver={(e) => handleDragOver(e, 'wifePhoto')}
+                        onDragLeave={(e) => handleDragLeave(e, 'wifePhoto')}
+                        onDrop={(e) => handleDrop(e, 'wifePhoto')}
+                      >
+                        <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <div className="mt-4">
+                          <label htmlFor="wifePhoto" className="cursor-pointer">
+                            <span className="mt-2 block text-sm font-medium text-gray-900">
+                              Click to upload or drag and drop
+                            </span>
+                            <span className="mt-1 block text-xs text-gray-500">
+                              JPG, PNG up to 3MB
+                            </span>
+                          </label>
+                          <input
+                            id="wifePhoto"
+                            name="wifePhoto"
+                            type="file"
+                            accept=".jpg,.jpeg,.png"
+                            onChange={(e) => handlePhotoInputChange(e, 'wifePhoto')}
+                            className="sr-only"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -505,7 +947,9 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
                 </div>
                 <div className="ml-3">
                   <p className="text-sm text-yellow-800 font-medium">
-                    <span className="font-bold">Note:</span> It is mandatory to attach photocopy of Govt. I.D. card with this Form.
+                    <span className="font-bold">Note:</span> It is mandatory to upload Government I.D. card (Husband's ID is required, Wife's ID is optional) and Husband's photo (Wife's photo is optional). 
+                    <br />• ID Cards: PDF, JPG, PNG (Max 5MB each)
+                    <br />• Photos: JPG, PNG (Max 3MB each)
                   </p>
                 </div>
               </div>
