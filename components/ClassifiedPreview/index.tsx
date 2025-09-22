@@ -1,42 +1,140 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import axios from "axios";
+
+interface ClassifiedItem {
+  classified_id: number;
+  title: string;
+  category: string | null;
+  description: string;
+  contact_info: string;
+  is_featured: boolean;
+  created_at: string;
+}
+
+interface CategoryCount {
+  name: string;
+  count: number;
+  icon: string;
+}
 
 const ClassifiedPreview = () => {
-  const featuredClassifieds = [
-    {
-      id: 1,
-      title: "Business Partnership Opportunity",
-      category: "Business",
-      description: "Looking for partners in textile business. Experience required.",
-      contact: "+91 98765 43210",
-      featured: true
-    },
-    {
-      id: 2,
-      title: "Property for Sale",
-      category: "Real Estate",
-      description: "3BHK apartment in prime location. Ready to move.",
-      contact: "+91 98765 43211",
-      featured: false
-    },
-    {
-      id: 3,
-      title: "Job Opening - Accountant",
-      category: "Jobs",
-      description: "CA firm looking for experienced accountant. Good salary.",
-      contact: "+91 98765 43212",
-      featured: true
-    }
-  ];
+  const [featuredClassifieds, setFeaturedClassifieds] = useState<ClassifiedItem[]>([]);
+  const [categories, setCategories] = useState<CategoryCount[]>([
+    { name: "Business", count: 0, icon: "💼" },
+    { name: "Real Estate", count: 0, icon: "🏠" },
+    { name: "Jobs", count: 0, icon: "💻" },
+    { name: "Vehicles", count: 0, icon: "🚗" },
+    { name: "Education", count: 0, icon: "📚" },
+    { name: "Events", count: 0, icon: "🎉" }
+  ]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const categories = [
-    { name: "Business", count: 45, icon: "💼" },
-    { name: "Real Estate", count: 32, icon: "🏠" },
-    { name: "Jobs", count: 28, icon: "💻" },
-    { name: "Vehicles", count: 15, icon: "🚗" },
-    { name: "Education", count: 22, icon: "📚" },
-    { name: "Events", count: 18, icon: "🎉" }
-  ];
+  // Fetch classifieds from API
+  useEffect(() => {
+    const fetchClassifieds = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await axios.get('http://localhost:4005/api/classifieds');
+        
+        if (response.data && response.data.length > 0) {
+          // Get featured classifieds (first 3)
+          setFeaturedClassifieds(response.data.slice(0, 3));
+          
+          // Calculate category counts
+          const categoryCounts = categories.map(cat => {
+            const count = response.data.filter((item: ClassifiedItem) => 
+              item.category && item.category.toLowerCase() === cat.name.toLowerCase()
+            ).length;
+            return { ...cat, count };
+          });
+          setCategories(categoryCounts);
+        } else {
+          // Fallback to sample data if no classifieds exist
+          setFeaturedClassifieds([
+            {
+              classified_id: 1,
+              title: "Business Partnership Opportunity",
+              category: "Business",
+              description: "Looking for partners in textile business. Experience required.",
+              contact_info: "+91 98765 43210",
+              is_featured: true,
+              created_at: new Date().toISOString()
+            },
+            {
+              classified_id: 2,
+              title: "Property for Sale",
+              category: "Real Estate",
+              description: "3BHK apartment in prime location. Ready to move.",
+              contact_info: "+91 98765 43211",
+              is_featured: false,
+              created_at: new Date().toISOString()
+            },
+            {
+              classified_id: 3,
+              title: "Job Opening - Accountant",
+              category: "Jobs",
+              description: "CA firm looking for experienced accountant. Good salary.",
+              contact_info: "+91 98765 43212",
+              is_featured: true,
+              created_at: new Date().toISOString()
+            }
+          ]);
+          
+          setCategories([
+            { name: "Business", count: 45, icon: "💼" },
+            { name: "Real Estate", count: 32, icon: "🏠" },
+            { name: "Jobs", count: 28, icon: "💻" },
+            { name: "Vehicles", count: 15, icon: "🚗" },
+            { name: "Education", count: 22, icon: "📚" },
+            { name: "Events", count: 18, icon: "🎉" }
+          ]);
+        }
+      } catch (err) {
+        console.error('Error fetching classifieds:', err);
+        setError('Failed to load classifieds');
+        
+        // Fallback to sample data
+        setFeaturedClassifieds([
+          {
+            classified_id: 1,
+            title: "Business Partnership Opportunity",
+            category: "Business",
+            description: "Looking for partners in textile business. Experience required.",
+            contact_info: "+91 98765 43210",
+            is_featured: true,
+            created_at: new Date().toISOString()
+          },
+          {
+            classified_id: 2,
+            title: "Property for Sale",
+            category: "Real Estate",
+            description: "3BHK apartment in prime location. Ready to move.",
+            contact_info: "+91 98765 43211",
+            is_featured: false,
+            created_at: new Date().toISOString()
+          },
+          {
+            classified_id: 3,
+            title: "Job Opening - Accountant",
+            category: "Jobs",
+            description: "CA firm looking for experienced accountant. Good salary.",
+            contact_info: "+91 98765 43212",
+            is_featured: true,
+            created_at: new Date().toISOString()
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClassifieds();
+  }, []);
 
   return (
     <>
@@ -66,49 +164,82 @@ const ClassifiedPreview = () => {
           </div>
 
           {/* Featured Classifieds */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {featuredClassifieds.map((item) => (
-              <div
-                key={item.id}
-                className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 ${
-                  item.featured ? "border-l-yellow-500" : "border-l-blue-500"
-                }`}
-              >
-                <div className="p-6">
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="bg-white rounded-lg shadow-md p-6 animate-pulse">
                   <div className="flex justify-between items-start mb-3">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      item.category === "Business" ? "bg-blue-100 text-blue-800" :
-                      item.category === "Real Estate" ? "bg-green-100 text-green-800" :
-                      "bg-purple-100 text-purple-800"
-                    }`}>
-                      {item.category}
-                    </span>
-                    {item.featured && (
-                      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
-                        Featured
-                      </span>
-                    )}
+                    <div className="h-6 bg-gray-200 rounded w-20"></div>
+                    <div className="h-6 bg-gray-200 rounded w-16"></div>
                   </div>
-                  
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {item.title}
-                  </h3>
-                  
-                  <p className="text-gray-600 text-sm mb-4">
-                    {item.description}
-                  </p>
-                  
-                  <div className="text-xs text-gray-500 mb-4">
-                    Contact: {item.contact}
-                  </div>
-                  
-                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm font-medium transition-colors duration-300">
-                    Contact Now
-                  </button>
+                  <div className="h-5 bg-gray-200 rounded w-full mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2 mb-4"></div>
+                  <div className="h-8 bg-gray-200 rounded w-full"></div>
                 </div>
+              ))}
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <div className="text-red-500 mb-4">
+                <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
               </div>
-            ))}
-          </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Error loading classifieds</h3>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <button 
+                onClick={() => window.location.reload()}
+                className="text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                Try again
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              {featuredClassifieds.map((item) => (
+                <div
+                  key={item.classified_id}
+                  className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 ${
+                    item.is_featured ? "border-l-yellow-500" : "border-l-blue-500"
+                  }`}
+                >
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-3">
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        item.category === "Business" ? "bg-blue-100 text-blue-800" :
+                        item.category === "Real Estate" ? "bg-green-100 text-green-800" :
+                        "bg-purple-100 text-purple-800"
+                      }`}>
+                        {item.category || "Uncategorized"}
+                      </span>
+                      {item.is_featured && (
+                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+                          Featured
+                        </span>
+                      )}
+                    </div>
+                    
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      {item.title}
+                    </h3>
+                    
+                    <p className="text-gray-600 text-sm mb-4">
+                      {item.description}
+                    </p>
+                    
+                    <div className="text-xs text-gray-500 mb-4">
+                      Contact: {item.contact_info}
+                    </div>
+                    
+                    <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm font-medium transition-colors duration-300">
+                      Contact Now
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="text-center pb-20">
             <Link

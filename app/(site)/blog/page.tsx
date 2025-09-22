@@ -6,13 +6,25 @@ import { useSearchParams } from "next/navigation";
 
 // Transform API data to match frontend Blog type
 const transformBlogPost = (apiPost: any) => {
+  // Build proper image URL for thumbnail
+  let mainImage = '/images/blog/blog-01.png'; // default fallback
+  if (apiPost.thumbnail_url) {
+    // If thumbnail_url exists, check if it's already a full URL or just a filename
+    if (apiPost.thumbnail_url.startsWith('http')) {
+      mainImage = apiPost.thumbnail_url;
+    } else {
+      // It's just a filename, prepend the backend uploads path
+      mainImage = `http://localhost:4005/uploads/${apiPost.thumbnail_url}`;
+    }
+  }
+
   return {
     _id: apiPost.post_id,
     title: apiPost.title,
     slug: apiPost.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
     metadata: apiPost.excerpt,
     body: apiPost.content || '',
-    mainImage: apiPost.thumbnail_url || '/images/blog/blog-01.png',
+    mainImage: mainImage,
     author: {
       _id: 1, // Default author ID since API doesn't provide author details
       name: apiPost.author_name,

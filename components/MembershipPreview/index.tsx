@@ -1,156 +1,187 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Link from "next/link";
+import SectionHeader from "@/components/Common/SectionHeader";
+import MembershipForm from "@/components/Membership/MembershipForm";
 
 const MembershipPreview = () => {
-  const membershipPlans = [
-    {
-      id: 1,
-      name: "Basic Member",
-      price: "Free",
-      duration: "Lifetime",
-      features: ["Access to community events", "Basic profile listing", "Newsletter subscription"],
-      popular: false
-    },
-    {
-      id: 2,
-      name: "Premium Member",
-      price: "₹500",
-      duration: "per year",
-      features: ["All Basic features", "Priority event registration", "Business networking access", "Matrimony profile boost"],
-      popular: true
-    },
-    {
-      id: 3,
-      name: "Patron Member",
-      price: "₹1000",
-      duration: "per year",
-      features: ["All Premium features", "VIP event access", "Leadership opportunities", "Mentorship programs"],
-      popular: false
-    }
-  ];
-
-  const benefits = [
-    {
-      icon: "🤝",
-      title: "Community Support",
-      description: "Connect with fellow Agarwal community members"
-    },
-    {
-      icon: "📚",
-      title: "Educational Programs",
-      description: "Access to workshops and seminars"
-    },
-    {
-      icon: "💼",
-      title: "Business Networking",
-      description: "Expand your professional network"
-    },
-    {
-      icon: "❤️",
-      title: "Matrimony Services",
-      description: "Find your life partner within community"
-    }
-  ];
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   return (
     <>
-      <section id="membership-preview" className="px-4 md:px-8 2xl:px-0">
-        <div className="relative mx-auto max-w-c-1390 px-7.5 pt-10 lg:px-15 lg:pt-15 xl:px-20 xl:pt-20">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Join Our Community
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Become a part of the vibrant Agarwal Samaj community. Choose the membership plan that best suits your needs.
-            </p>
-          </div>
+      <section id="membership-preview" className="py-20 lg:py-25 xl:py-30">
+        <div className="mx-auto max-w-c-1315 px-4 md:px-8 xl:px-0">
+          <SectionHeader
+            headerInfo={{
+              title: "Join Our Community",
+              subtitle: "Agarwal Samaj Membership",
+              description: "Become a part of the vibrant Agarwal Samaj community and unlock amazing benefits.",
+            }}
+          />
 
-          {/* Benefits */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {benefits.map((benefit, index) => (
-              <div
-                key={index}
-                className="text-center"
-              >
-                <div className="text-4xl mb-4">{benefit.icon}</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  {benefit.title}
-                </h3>
-                <p className="text-gray-600">
-                  {benefit.description}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Membership Plans */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {membershipPlans.map((plan) => (
-              <div
-                key={plan.id}
-                className={`relative bg-white rounded-lg shadow-lg overflow-hidden ${
-                  plan.popular ? "ring-2 ring-blue-500" : ""
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute top-0 left-0 right-0 bg-blue-500 text-white text-center py-2 text-sm font-medium">
-                    Most Popular
+          {/* Membership Preview Card */}
+          <div className="mt-15 xl:mt-20">
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
+                  
+                  {/* Left Div - Membership Details */}
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-8 lg:p-10 flex flex-col justify-center">
+                    <div className="text-center lg:text-left">
+                      <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">
+                        Agarwal Samaj Member
+                      </h3>
+                      
+                      <div className="mb-6">
+                        <div className="flex items-center justify-center lg:justify-start space-x-2 mb-2">
+                          <span className="text-4xl font-bold text-blue-600">
+                            ₹500
+                          </span>
+                          <span className="text-lg text-gray-600">
+                            per year
+                          </span>
+                        </div>
+                        <div className="text-sm text-gray-500 line-through">
+                          Original Price: ₹1000
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="flex items-center">
+                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <span className="text-gray-700 text-sm">Access to community events</span>
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <span className="text-gray-700 text-sm">Basic profile listing</span>
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <span className="text-gray-700 text-sm">Newsletter subscription</span>
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <span className="text-gray-700 text-sm">Community directory access</span>
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <span className="text-gray-700 text-sm">Priority event registration</span>
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <span className="text-gray-700 text-sm">Business networking access</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                )}
-                
-                <div className="p-8">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                    {plan.name}
-                  </h3>
                   
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold text-gray-900">
-                      {plan.price}
-                    </span>
-                    <span className="text-gray-600 ml-2">
-                      {plan.duration}
-                    </span>
+                  {/* Right Div - Join Us Animation */}
+                  <div className="bg-gradient-to-br from-orange-50 to-red-100 p-8 lg:p-10 flex flex-col justify-center items-center relative overflow-hidden">
+                    {/* Background Animation Elements */}
+                    <div className="absolute top-8 left-8 w-16 h-16 bg-orange-200 rounded-full opacity-20 animate-pulse"></div>
+                    <div className="absolute top-16 right-12 w-12 h-12 bg-red-200 rounded-full opacity-30 animate-bounce"></div>
+                    <div className="absolute bottom-16 left-12 w-10 h-10 bg-yellow-200 rounded-full opacity-25 animate-ping"></div>
+                    <div className="absolute bottom-8 right-8 w-20 h-20 bg-orange-300 rounded-full opacity-20 animate-pulse"></div>
+                    
+                    {/* Main Content */}
+                    <div className="text-center z-10">
+                      <div className="mb-6">
+                        <div className="w-24 h-24 mx-auto mb-4 relative">
+                          {/* Animated Circle */}
+                          <div className="w-full h-full border-4 border-orange-400 rounded-full animate-spin-slow"></div>
+                          <div className="absolute inset-3 border-4 border-red-400 rounded-full animate-spin-reverse"></div>
+                          <div className="absolute inset-6 border-4 border-yellow-400 rounded-full animate-pulse"></div>
+                          
+                          {/* Center Icon */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                              <span className="text-white text-xl font-bold">J</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
+                        Join Us Today!
+                      </h3>
+                      
+                      <p className="text-base text-gray-600 mb-6 max-w-sm">
+                        Be part of our growing community and unlock amazing benefits
+                      </p>
+                      
+                      <div className="space-y-2 mb-6">
+                        <div className="flex items-center justify-center space-x-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                          <span className="text-gray-700 text-sm">1000+ Active Members</span>
+                        </div>
+                        <div className="flex items-center justify-center space-x-2">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                          <span className="text-gray-700 text-sm">50+ Events This Year</span>
+                        </div>
+                        <div className="flex items-center justify-center space-x-2">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                          <span className="text-gray-700 text-sm">24/7 Community Support</span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <button 
+                          onClick={() => setIsFormOpen(true)}
+                          className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-xl font-bold text-base hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                        >
+                          Register for Membership
+                        </button>
+                        
+                        <Link 
+                          href="/membership"
+                          className="block w-full bg-white text-orange-600 border-2 border-orange-500 px-6 py-3 rounded-xl font-bold text-base hover:bg-orange-50 transition-all duration-300"
+                        >
+                          Learn More
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-center">
-                        <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <Link
-                    href="/membership"
-                    className={`w-full text-center py-3 px-6 rounded-lg font-medium transition-colors duration-300 ${
-                      plan.popular 
-                        ? "bg-blue-600 hover:bg-blue-700 text-white" 
-                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                    }`}
-                  >
-                    {plan.price === "Free" ? "Join Free" : "Join Now"}
-                  </Link>
                 </div>
               </div>
-            ))}
-          </div>
-
-          <div className="text-center pb-20">
-            <Link
-              href="/membership"
-              className="inline-flex items-center bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-300"
-            >
-              View All Plans
-              <svg className="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </Link>
+            </div>
           </div>
         </div>
       </section>
+      
+      {/* Membership Form Modal */}
+      <MembershipForm 
+        isOpen={isFormOpen} 
+        onClose={() => setIsFormOpen(false)} 
+      />
     </>
   );
 };

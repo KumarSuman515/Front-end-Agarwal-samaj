@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import axios from "axios";
+import { useToast } from "@/app/context/ToastContext";
 
 interface MembershipFormProps {
   isOpen: boolean;
@@ -7,6 +9,7 @@ interface MembershipFormProps {
 }
 
 const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     membershipNumber: "",
     applicantName: "",
@@ -51,6 +54,9 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
     wifePhoto: false
   });
 
+  // Loading state
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -65,12 +71,12 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
     const maxSize = 5 * 1024 * 1024; // 5MB
     
     if (!allowedTypes.includes(file.type)) {
-      alert('Please upload only PDF, JPG, or PNG files.');
+      showToast('Please upload only PDF, JPG, or PNG files.', 'error');
       return false;
     }
     
     if (file.size > maxSize) {
-      alert('File size should not exceed 5MB.');
+      showToast('File size should not exceed 5MB.', 'error');
       return false;
     }
     
@@ -83,12 +89,12 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
     const maxSize = 3 * 1024 * 1024; // 3MB for photos
     
     if (!allowedTypes.includes(file.type)) {
-      alert('Please upload only JPG or PNG image files for photos.');
+      showToast('Please upload only JPG or PNG image files for photos.', 'error');
       return false;
     }
     
     if (file.size > maxSize) {
-      alert('Photo size should not exceed 3MB.');
+      showToast('Photo size should not exceed 3MB.', 'error');
       return false;
     }
     
@@ -102,6 +108,8 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
         ...prev,
         [fieldName]: file
       }));
+      const documentType = fieldName === 'husbandIdCard' ? "Husband's ID card" : "Wife's ID card";
+      showToast(`✅ ${documentType} uploaded successfully!`, "success");
     }
   };
 
@@ -112,6 +120,8 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
         ...prev,
         [fieldName]: file
       }));
+      const photoType = fieldName === 'husbandPhoto' ? "Husband's photo" : "Wife's photo";
+      showToast(`📸 ${photoType} uploaded successfully!`, "success");
     }
   };
 
@@ -171,6 +181,8 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
       ...prev,
       [fieldName]: null
     }));
+    const documentType = fieldName === 'husbandIdCard' ? "Husband's ID card" : "Wife's ID card";
+    showToast(`🗑️ ${documentType} removed`, "info");
   };
 
   // Remove uploaded photo
@@ -179,71 +191,141 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
       ...prev,
       [fieldName]: null
     }));
+    const photoType = fieldName === 'husbandPhoto' ? "Husband's photo" : "Wife's photo";
+    showToast(`🗑️ ${photoType} removed`, "info");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validation
     if (!formData.membershipFee) {
-      alert("Please select a membership fee option.");
+      showToast("Please select a membership fee option.", "error");
       return;
     }
 
-    // Check if ID card files are uploaded
     if (!uploadedFiles.husbandIdCard) {
-      alert("Please upload Husband's Government ID card.");
+      showToast("Please upload Husband's Government ID card.", "error");
       return;
     }
 
-    // Check if husband's photo is uploaded
     if (!uploadedPhotos.husbandPhoto) {
-      alert("Please upload Husband's photo.");
+      showToast("Please upload Husband's photo.", "error");
       return;
     }
     
     const selectedAmount = parseInt(formData.membershipFee);
     const membershipType = selectedAmount === 21000 ? "Patron" : "Life Member";
     
-    // Create FormData for file upload
-    const submitData = new FormData();
+    setIsLoading(true);
     
-    // Add form data
-    Object.keys(formData).forEach(key => {
-      submitData.append(key, formData[key as keyof typeof formData]);
-    });
-    
-    // Add files
-    if (uploadedFiles.husbandIdCard) {
-      submitData.append('husbandIdCard', uploadedFiles.husbandIdCard);
+    try {
+      // Create FormData for file upload
+      const submitData = new FormData();
+      
+      // Generate membership number if not provided
+      const membershipNumber = formData.membershipNumber || `MEM${Date.now()}`;
+      submitData.append('membershipNumber', membershipNumber);
+      
+      // Add form data
+      Object.keys(formData).forEach(key => {
+        if (key !== 'membershipNumber') {
+          submitData.append(key, formData[key as keyof typeof formData]);
+        }
+      });
+      
+      // Add files
+      if (uploadedFiles.husbandIdCard) {
+        submitData.append('husbandIdCard', uploadedFiles.husbandIdCard);
+      }
+      if (uploadedFiles.wifeIdCard) {
+        submitData.append('wifeIdCard', uploadedFiles.wifeIdCard);
+      }
+      
+      // Add photos
+      if (uploadedPhotos.husbandPhoto) {
+        submitData.append('husbandPhoto', uploadedPhotos.husbandPhoto);
+      }
+      if (uploadedPhotos.wifePhoto) {
+        submitData.append('wifePhoto', uploadedPhotos.wifePhoto);
+      }
+      
+      console.log("Submitting membership application...");
+      console.log("Form data:", formData);
+      console.log("Files:", uploadedFiles);
+      console.log("Photos:", uploadedPhotos);
+      
+      // Submit to backend directly
+      const response = await axios.post('http://localhost:4005/api/membership', submitData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 300000, // 30 seconds timeout for file uploads
+      });
+      
+      console.log("Membership created successfully:", response.data);
+      
+      const uploadedItems: string[] = [];
+      if (uploadedFiles.husbandIdCard) uploadedItems.push(`Husband ID: ${uploadedFiles.husbandIdCard.name}`);
+      if (uploadedFiles.wifeIdCard) uploadedItems.push(`Wife ID: ${uploadedFiles.wifeIdCard.name}`);
+      if (uploadedPhotos.husbandPhoto) uploadedItems.push(`Husband Photo: ${uploadedPhotos.husbandPhoto.name}`);
+      if (uploadedPhotos.wifePhoto) uploadedItems.push(`Wife Photo: ${uploadedPhotos.wifePhoto.name}`);
+      
+      // Show success toast notification
+      showToast(
+        `🎉 Membership application submitted successfully! Selected: ${membershipType} - Rs. ${selectedAmount.toLocaleString()}/-. Membership Number: ${response.data.membership?.membershipNumber || membershipNumber}`,
+        "success"
+      );
+      
+      // Reset form after successful submission
+      setTimeout(() => {
+        setFormData({
+          membershipNumber: "",
+          applicantName: "",
+          wifeName: "",
+          husbandIdCard: "",
+          wifeIdCard: "",
+          applicantDob: "",
+          marriageDate: "",
+          wifeDob: "",
+          fatherHusbandName: "",
+          gotra: "",
+          resAddress: "",
+          villageCity: "",
+          district: "",
+          state: "",
+          pincode: "",
+          telephone: "",
+          mobileSelf: "",
+          mobileWife: "",
+          faxEmail: "",
+          occupation: "",
+          origin: "",
+          corpusFund: "",
+          lifeMagazineFee: "",
+          membershipFee: ""
+        });
+        setUploadedFiles({ husbandIdCard: null, wifeIdCard: null });
+        setUploadedPhotos({ husbandPhoto: null, wifePhoto: null });
+        onClose();
+      }, 2000);
+      
+    } catch (error: any) {
+      console.error("Error submitting membership:", error);
+      
+      let errorMessage = "An error occurred while submitting the membership application.";
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      // Show error toast notification
+      showToast(`❌ ${errorMessage}`, "error");
+    } finally {
+      setIsLoading(false);
     }
-    if (uploadedFiles.wifeIdCard) {
-      submitData.append('wifeIdCard', uploadedFiles.wifeIdCard);
-    }
-    
-    // Add photos
-    if (uploadedPhotos.husbandPhoto) {
-      submitData.append('husbandPhoto', uploadedPhotos.husbandPhoto);
-    }
-    if (uploadedPhotos.wifePhoto) {
-      submitData.append('wifePhoto', uploadedPhotos.wifePhoto);
-    }
-    
-    console.log("Form submitted:", formData);
-    console.log("Files uploaded:", uploadedFiles);
-    console.log("Photos uploaded:", uploadedPhotos);
-    console.log(`Selected: ${membershipType} - Rs. ${selectedAmount.toLocaleString()}/-`);
-    
-    // Here you would typically send the FormData to your backend
-    // Example: await fetch('/api/membership', { method: 'POST', body: submitData });
-    
-    const uploadedItems: string[] = [];
-    if (uploadedFiles.husbandIdCard) uploadedItems.push(`Husband ID: ${uploadedFiles.husbandIdCard.name}`);
-    if (uploadedFiles.wifeIdCard) uploadedItems.push(`Wife ID: ${uploadedFiles.wifeIdCard.name}`);
-    if (uploadedPhotos.husbandPhoto) uploadedItems.push(`Husband Photo: ${uploadedPhotos.husbandPhoto.name}`);
-    if (uploadedPhotos.wifePhoto) uploadedItems.push(`Wife Photo: ${uploadedPhotos.wifePhoto.name}`);
-    
-    alert(`Membership application submitted successfully!\nSelected: ${membershipType} - Rs. ${selectedAmount.toLocaleString()}/-\nUploaded: ${uploadedItems.join(', ')}`);
-    onClose();
   };
 
   if (!isOpen) return null;
@@ -315,6 +397,25 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
 
         {/* Form Content */}
         <div className="p-4">
+
+          {/* Loading Message */}
+          {isLoading && (
+            <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="animate-spin h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-blue-800 font-medium">
+                    Submitting your membership application... Please wait.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
          
           
 
@@ -966,9 +1067,24 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                disabled={isLoading}
+                className={`px-6 py-2 rounded-lg transition-all duration-300 shadow-lg ${
+                  isLoading
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 transform hover:scale-105'
+                }`}
               >
-                Submit Application
+                {isLoading ? (
+                  <div className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Submitting...
+                  </div>
+                ) : (
+                  'Submit Application'
+                )}
               </button>
             </div>
           </form>

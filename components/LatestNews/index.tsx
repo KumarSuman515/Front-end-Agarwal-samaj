@@ -5,13 +5,25 @@ import { Blog } from "@/types/blog";
 
 // Transform API data to match frontend Blog type
 const transformBlogPost = (apiPost: any) => {
+  // Build proper image URL for thumbnail
+  let mainImage = '/images/blog/blog-01.png'; // default fallback
+  if (apiPost.thumbnail_url) {
+    // If thumbnail_url exists, check if it's already a full URL or just a filename
+    if (apiPost.thumbnail_url.startsWith('http')) {
+      mainImage = apiPost.thumbnail_url;
+    } else {
+      // It's just a filename, prepend the backend uploads path
+      mainImage = `http://localhost:4005/uploads/${apiPost.thumbnail_url}`;
+    }
+  }
+
   return {
     _id: apiPost.post_id,
     title: apiPost.title,
     slug: apiPost.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
     metadata: apiPost.excerpt,
     body: apiPost.content || '',
-    mainImage: apiPost.thumbnail_url || '/images/blog/blog-01.png',
+    mainImage: mainImage,
     author: {
       _id: 1, // Default author ID since API doesn't provide author details
       name: apiPost.author_name,
@@ -29,71 +41,8 @@ const LatestNews = async () => {
   let blogPosts: Blog[] = [];
   let error: string | null = null;
 
-  // Dummy data for testing
-  const dummyNewsData = [
-    {
-      post_id: 'news1',
-      title: 'ब्रेकिंग: नई दिल्ली में बड़ी राजनीतिक घटना',
-      excerpt: 'दिल्ली में आज एक बड़ी राजनीतिक घटना हुई है जो पूरे देश को प्रभावित कर सकती है। विस्तृत जानकारी के लिए पढ़ते रहें...',
-      content: 'विस्तृत समाचार सामग्री...',
-      thumbnail_url: '/images/blog/blog-01.png',
-      author_name: 'राजेश कुमार',
-      Category: { category_name: 'राजनीति' },
-      publish_date: '2024-01-15T10:30:00Z'
-    },
-    {
-      post_id: 'news2',
-      title: 'महंगाई पर सरकार का बड़ा फैसला',
-      excerpt: 'केंद्र सरकार ने महंगाई को नियंत्रित करने के लिए कई महत्वपूर्ण निर्णय लिए हैं।',
-      content: 'विस्तृत समाचार सामग्री...',
-      thumbnail_url: '/images/blog/blog-02.png',
-      author_name: 'प्रिया शर्मा',
-      Category: { category_name: 'अर्थव्यवस्था' },
-      publish_date: '2024-01-14T15:45:00Z'
-    },
-    {
-      post_id: 'news3',
-      title: 'खेल जगत में नया रिकॉर्ड',
-      excerpt: 'भारतीय खिलाड़ी ने नया विश्व रिकॉर्ड बनाया है।',
-      content: 'विस्तृत समाचार सामग्री...',
-      thumbnail_url: '/images/blog/blog-03.png',
-      author_name: 'अमित सिंह',
-      Category: { category_name: 'खेल' },
-      publish_date: '2024-01-13T09:20:00Z'
-    },
-    {
-      post_id: 'news4',
-      title: 'विज्ञान और प्रौद्योगिकी में नई खोज',
-      excerpt: 'भारतीय वैज्ञानिकों ने एक बड़ी वैज्ञानिक खोज की है जो दुनिया भर में चर्चा का विषय बनी है।',
-      content: 'विस्तृत समाचार सामग्री...',
-      thumbnail_url: '/images/blog/blog-04.png',
-      author_name: 'डॉ. प्रिया शर्मा',
-      Category: { category_name: 'विज्ञान' },
-      publish_date: '2024-01-12T14:15:00Z'
-    }
-  ];
-
-  const dummyBlogData = [
-    // Empty blog data - only news will be shown
-  ];
-
   try {
-    // Use dummy data for now
-    newsPosts = dummyNewsData.map(transformBlogPost);
-    blogPosts = dummyBlogData.map(transformBlogPost);
-    
-    // Uncomment below code when API is ready
-    /*
-    // Fetch news posts (assuming there's a separate news API endpoint)
-    const newsResponse = await fetch('http://localhost:4005/api/blogs?type=news', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-    });
-
-    // Fetch blog posts
+    // Fetch blog posts from API
     const blogResponse = await fetch('http://localhost:4005/api/blogs', {
       method: 'GET',
       headers: {
@@ -102,19 +51,39 @@ const LatestNews = async () => {
       cache: 'no-store',
     });
 
-    if (!newsResponse.ok || !blogResponse.ok) {
-      throw new Error(`HTTP error! status: ${newsResponse.status || blogResponse.status}`);
+    if (!blogResponse.ok) {
+      throw new Error(`HTTP error! status: ${blogResponse.status}`);
     }
 
-    const newsApiPosts = await newsResponse.json();
     const blogApiPosts = await blogResponse.json();
     
-    newsPosts = newsApiPosts.map(transformBlogPost);
-    blogPosts = blogApiPosts.map(transformBlogPost);
-    */
+    // Transform all posts and use them as news (since we don't have separate news endpoint)
+    const allPosts = blogApiPosts.map(transformBlogPost);
+    
+    // Use the latest posts as news
+    newsPosts = allPosts.slice(0, 4);
+    blogPosts = allPosts.slice(4, 8); // Additional posts for variety
+    
   } catch (err) {
     console.error('Error fetching posts:', err);
     error = 'Failed to load latest news and blogs';
+    
+    // Fallback to some sample data if API fails
+    const fallbackData = [
+      {
+        post_id: 'fallback1',
+        title: 'Welcome to Agarwal Samaj',
+        excerpt: 'Join our vibrant community and be part of something special. Connect with fellow community members.',
+        content: 'Welcome to our community platform...',
+        thumbnail_url: '/images/blog/blog-01.png',
+        author_name: 'Community Admin',
+        Category: { category_name: 'Community' },
+        publish_date: new Date().toISOString()
+      }
+    ];
+    
+    newsPosts = fallbackData.map(transformBlogPost);
+    blogPosts = [];
   }
 
   return (
