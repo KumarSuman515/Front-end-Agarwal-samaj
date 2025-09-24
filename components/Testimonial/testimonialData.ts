@@ -5,34 +5,34 @@ import { Testimonial } from "@/types/testimonial";
 export const testimonialData: Testimonial[] = [
   {
     id: 1,
-    name: "Devid Smith",
-    designation: "Founter @democompany",
+    name: "Priya Agarwal",
+    designation: "Community Member",
     image: image1,
     content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris hendrerit, ligula sit amet cursus tincidunt, lorem sem elementum nisi, convallis fringilla ante nibh non urna.",
+      "The Agarwal Samaj platform has been incredible for our family. We found our daughter's perfect match through the matrimony service, and the community events have brought us closer to our heritage.",
   },
   {
     id: 2,
-    name: "Jhon Abraham",
-    designation: "Founter @democompany",
+    name: "Rajesh Agarwal",
+    designation: "Business Owner",
     image: image2,
     content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris hendrerit, ligula sit amet cursus tincidunt, lorem sem elementum nisi, convallis fringilla ante nibh non urna.",
+      "Through the classifieds section, I've been able to grow my business by connecting with other community members. The platform has created amazing networking opportunities for entrepreneurs like me.",
   },
   {
     id: 3,
-    name: "Devid Smith",
-    designation: "Founter @democompany",
+    name: "Sunita Agarwal",
+    designation: "Community Volunteer",
     image: image1,
     content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris hendrerit, ligula sit amet cursus tincidunt, lorem sem elementum nisi, convallis fringilla ante nibh non urna.",
+      "The blog section keeps us updated with community news and cultural insights. It's wonderful to see how technology is helping preserve and strengthen our traditions.",
   },
   {
     id: 4,
-    name: "Jhon Abraham",
-    designation: "Founter @democompany",
+    name: "Amit Agarwal",
+    designation: "Software Engineer",
     image: image2,
     content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris hendrerit, ligula sit amet cursus tincidunt, lorem sem elementum nisi, convallis fringilla ante nibh non urna.",
+      "The membership program has given me access to exclusive events and networking opportunities. It's amazing how this platform brings together professionals from various fields within our community.",
   },
 ];

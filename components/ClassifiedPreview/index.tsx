@@ -4,12 +4,16 @@ import Link from "next/link";
 import axios from "axios";
 
 interface ClassifiedItem {
-  classified_id: number;
-  title: string;
-  category: string | null;
-  description: string;
-  contact_info: string;
-  is_featured: boolean;
+  id: number;
+  person_name: string;
+  firm_name: string;
+  firm_address: string;
+  phone: string;
+  email: string;
+  website: string | null;
+  business_category: string;
+  photos: string | null;
+  status: string;
   created_at: string;
 }
 
@@ -42,13 +46,18 @@ const ClassifiedPreview = () => {
         const response = await axios.get('http://localhost:4005/api/classifieds');
         
         if (response.data && response.data.length > 0) {
-          // Get featured classifieds (first 3)
-          setFeaturedClassifieds(response.data.slice(0, 3));
+          // Filter only approved classifieds
+          const approvedClassifieds = response.data.filter((item: ClassifiedItem) => 
+            item.status === 'approved'
+          );
           
-          // Calculate category counts
+          // Get featured classifieds (first 3 approved ones)
+          setFeaturedClassifieds(approvedClassifieds.slice(0, 3));
+          
+          // Calculate category counts from approved classifieds
           const categoryCounts = categories.map(cat => {
-            const count = response.data.filter((item: ClassifiedItem) => 
-              item.category && item.category.toLowerCase() === cat.name.toLowerCase()
+            const count = approvedClassifieds.filter((item: ClassifiedItem) => 
+              item.business_category && item.business_category.toLowerCase() === cat.name.toLowerCase()
             ).length;
             return { ...cat, count };
           });
@@ -57,30 +66,42 @@ const ClassifiedPreview = () => {
           // Fallback to sample data if no classifieds exist
           setFeaturedClassifieds([
             {
-              classified_id: 1,
-              title: "Business Partnership Opportunity",
-              category: "Business",
-              description: "Looking for partners in textile business. Experience required.",
-              contact_info: "+91 98765 43210",
-              is_featured: true,
+              id: 1,
+              person_name: "Rajesh Agarwal",
+              firm_name: "Agarwal Textiles",
+              firm_address: "123 Business Park, Delhi",
+              phone: "+91 98765 43210",
+              email: "rajesh@agarwaltextiles.com",
+              website: "www.agarwaltextiles.com",
+              business_category: "Business",
+              photos: null,
+              status: "approved",
               created_at: new Date().toISOString()
             },
             {
-              classified_id: 2,
-              title: "Property for Sale",
-              category: "Real Estate",
-              description: "3BHK apartment in prime location. Ready to move.",
-              contact_info: "+91 98765 43211",
-              is_featured: false,
+              id: 2,
+              person_name: "Priya Agarwal",
+              firm_name: "Agarwal Properties",
+              firm_address: "456 Real Estate Hub, Mumbai",
+              phone: "+91 98765 43211",
+              email: "priya@agarwalproperties.com",
+              website: "www.agarwalproperties.com",
+              business_category: "Real Estate",
+              photos: null,
+              status: "approved",
               created_at: new Date().toISOString()
             },
             {
-              classified_id: 3,
-              title: "Job Opening - Accountant",
-              category: "Jobs",
-              description: "CA firm looking for experienced accountant. Good salary.",
-              contact_info: "+91 98765 43212",
-              is_featured: true,
+              id: 3,
+              person_name: "Vikram Agarwal",
+              firm_name: "Agarwal CA Services",
+              firm_address: "789 Financial District, Bangalore",
+              phone: "+91 98765 43212",
+              email: "vikram@agarwalca.com",
+              website: "www.agarwalca.com",
+              business_category: "Jobs",
+              photos: null,
+              status: "approved",
               created_at: new Date().toISOString()
             }
           ]);
@@ -101,30 +122,42 @@ const ClassifiedPreview = () => {
         // Fallback to sample data
         setFeaturedClassifieds([
           {
-            classified_id: 1,
-            title: "Business Partnership Opportunity",
-            category: "Business",
-            description: "Looking for partners in textile business. Experience required.",
-            contact_info: "+91 98765 43210",
-            is_featured: true,
+            id: 1,
+            person_name: "Rajesh Agarwal",
+            firm_name: "Agarwal Textiles",
+            firm_address: "123 Business Park, Delhi",
+            phone: "+91 98765 43210",
+            email: "rajesh@agarwaltextiles.com",
+            website: "www.agarwaltextiles.com",
+            business_category: "Business",
+            photos: null,
+            status: "approved",
             created_at: new Date().toISOString()
           },
           {
-            classified_id: 2,
-            title: "Property for Sale",
-            category: "Real Estate",
-            description: "3BHK apartment in prime location. Ready to move.",
-            contact_info: "+91 98765 43211",
-            is_featured: false,
+            id: 2,
+            person_name: "Priya Agarwal",
+            firm_name: "Agarwal Properties",
+            firm_address: "456 Real Estate Hub, Mumbai",
+            phone: "+91 98765 43211",
+            email: "priya@agarwalproperties.com",
+            website: "www.agarwalproperties.com",
+            business_category: "Real Estate",
+            photos: null,
+            status: "approved",
             created_at: new Date().toISOString()
           },
           {
-            classified_id: 3,
-            title: "Job Opening - Accountant",
-            category: "Jobs",
-            description: "CA firm looking for experienced accountant. Good salary.",
-            contact_info: "+91 98765 43212",
-            is_featured: true,
+            id: 3,
+            person_name: "Vikram Agarwal",
+            firm_name: "Agarwal CA Services",
+            firm_address: "789 Financial District, Bangalore",
+            phone: "+91 98765 43212",
+            email: "vikram@agarwalca.com",
+            website: "www.agarwalca.com",
+            business_category: "Jobs",
+            photos: null,
+            status: "approved",
             created_at: new Date().toISOString()
           }
         ]);
@@ -151,9 +184,9 @@ const ClassifiedPreview = () => {
 
           {/* Categories */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <div
-                key={index}
+                key={category.name}
                 className="bg-white rounded-lg p-4 text-center hover:shadow-md transition-shadow duration-300"
               >
                 <div className="text-2xl mb-2">{category.icon}</div>
@@ -199,37 +232,43 @@ const ClassifiedPreview = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {featuredClassifieds.map((item) => (
                 <div
-                  key={item.classified_id}
-                  className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 ${
-                    item.is_featured ? "border-l-yellow-500" : "border-l-blue-500"
-                  }`}
+                  key={item.id}
+                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-l-blue-500"
                 >
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-3">
                       <span className={`text-xs px-2 py-1 rounded-full ${
-                        item.category === "Business" ? "bg-blue-100 text-blue-800" :
-                        item.category === "Real Estate" ? "bg-green-100 text-green-800" :
-                        "bg-purple-100 text-purple-800"
+                        item.business_category === "Business" ? "bg-blue-100 text-blue-800" :
+                        item.business_category === "Real Estate" ? "bg-green-100 text-green-800" :
+                        item.business_category === "Jobs" ? "bg-purple-100 text-purple-800" :
+                        item.business_category === "Vehicles" ? "bg-orange-100 text-orange-800" :
+                        item.business_category === "Education" ? "bg-indigo-100 text-indigo-800" :
+                        item.business_category === "Events" ? "bg-pink-100 text-pink-800" :
+                        "bg-gray-100 text-gray-800"
                       }`}>
-                        {item.category || "Uncategorized"}
+                        {item.business_category || "Uncategorized"}
                       </span>
-                      {item.is_featured && (
-                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
-                          Featured
-                        </span>
-                      )}
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                        Approved
+                      </span>
                     </div>
                     
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {item.title}
+                      {item.firm_name}
                     </h3>
                     
+                    <p className="text-gray-600 text-sm mb-2">
+                      <strong>Owner:</strong> {item.person_name}
+                    </p>
+                    
                     <p className="text-gray-600 text-sm mb-4">
-                      {item.description}
+                      <strong>Address:</strong> {item.firm_address}
                     </p>
                     
                     <div className="text-xs text-gray-500 mb-4">
-                      Contact: {item.contact_info}
+                      <div><strong>Phone:</strong> {item.phone}</div>
+                      <div><strong>Email:</strong> {item.email}</div>
+                      {item.website && <div><strong>Website:</strong> {item.website}</div>}
                     </div>
                     
                     <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm font-medium transition-colors duration-300">

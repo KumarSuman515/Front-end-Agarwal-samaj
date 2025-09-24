@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useToast } from "@/app/context/ToastContext";
+import { useHeader } from "@/app/context/HeaderContext";
 
 interface MembershipFormProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface MembershipFormProps {
 
 const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
   const { showToast } = useToast();
+  const { setHeaderVisible } = useHeader();
   const [formData, setFormData] = useState({
     membershipNumber: "",
     applicantName: "",
@@ -56,6 +58,20 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
 
   // Loading state
   const [isLoading, setIsLoading] = useState(false);
+
+  // Hide/show header when form opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      setHeaderVisible(false);
+    } else {
+      setHeaderVisible(true);
+    }
+    
+    // Cleanup function to show header when component unmounts
+    return () => {
+      setHeaderVisible(true);
+    };
+  }, [isOpen, setHeaderVisible]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -331,8 +347,8 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-6 ">
-      <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative mt-20">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-6">
+      <div className="bg-white shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
         {/* Close Button - Outside Form */}
         <button
           onClick={onClose}

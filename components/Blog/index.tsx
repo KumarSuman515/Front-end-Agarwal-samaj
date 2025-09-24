@@ -62,19 +62,15 @@ const Blog = async () => {
   }
 
   return (
-    <section className="py-20 lg:py-25 xl:py-30">
-      <div className="mx-auto max-w-c-1315 px-4 md:px-8 xl:px-0">
-        {/* <!-- Section Title Start --> */}
-        <div className="animate_top mx-auto text-center">
-          <SectionHeader
-            headerInfo={{
-              title: `NEWS & BLOGS`,
-              subtitle: `Latest News & Blogs`,
-              description: `Stay updated with the latest news, events, and stories from the Agarwal community. Discover inspiring achievements, cultural insights, and community initiatives.`,
-            }}
-          />
-        </div>
-        {/* <!-- Section Title End --> */}
+    <section id="blog" className="px-4 md:px-8 2xl:px-0">
+      <div className="relative mx-auto max-w-c-1390 px-7.5 pt-10 lg:px-15 lg:pt-15 xl:px-20 xl:pt-20">
+        <SectionHeader
+          headerInfo={{
+            title: "AGARWAL SAMAJ BLOG",
+            subtitle: "Stay Updated with Community Stories",
+            description: "Stay updated with the latest news, events, and stories from the Agarwal community. Discover inspiring achievements, cultural insights, and community initiatives that bring us together."
+          }}
+        />
       </div>
 
       <div className="mx-auto mt-15 max-w-c-1280 px-4 md:px-8 xl:mt-20 xl:px-0">
@@ -100,23 +96,35 @@ const Blog = async () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2 lg:grid-cols-3 xl:gap-10">
-              {blogPosts.slice(0, 6).map((blog) => (
-                <BlogItem blog={blog} key={blog._id} />
-              ))}
-            </div>
-            
-            {/* View All Button */}
-            <div className="mt-12 text-center">
-              <Link
-                href="/blog"
-                className="inline-flex items-center rounded-lg bg-primary px-8 py-3 font-medium text-white transition-all duration-300 hover:bg-primary/90 hover:shadow-lg"
-              >
-                View All Articles
-                <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
+            <div className="relative">
+              {/* Blog Grid */}
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:gap-10">
+                {blogPosts.slice(0, 6).map((blog, index) => (
+                  <div 
+                    key={blog._id}
+                    className="transform transition-all duration-300 hover:-translate-y-2"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <BlogItem blog={blog} />
+                  </div>
+                ))}
+              </div>
+              
+              {/* View All Button */}
+              <div className="mt-16 text-center">
+                <Link
+                  href="/blog"
+                  className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-orange-500 to-amber-500 px-10 py-4 font-semibold text-white shadow-lg transition-all duration-300 hover:from-orange-600 hover:to-amber-600 hover:shadow-xl hover:scale-105"
+                >
+                  <span className="relative z-10 flex items-center">
+                    Explore All Articles
+                    <svg className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-amber-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                </Link>
+              </div>
             </div>
           </>
         )}

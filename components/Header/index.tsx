@@ -6,11 +6,13 @@ import { useEffect, useState } from "react";
 
 import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
+import { useHeader } from "@/app/context/HeaderContext";
 
 const Header = () => {
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [dropdownToggler, setDropdownToggler] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
+  const { isHeaderVisible } = useHeader();
 
   const pathUrl = usePathname();
 
@@ -27,15 +29,20 @@ const Header = () => {
     window.addEventListener("scroll", handleStickyMenu);
   });
 
+  // Don't render header if it's hidden
+  if (!isHeaderVisible) {
+    return null;
+  }
+
   return (
     <header
-      className={`fixed left-0 top-0 z-99999 w-full py-7 transition-all duration-300 ${
+      className={`fixed left-0 top-0 z-99999 w-full py-4 sm:py-6 lg:py-7 transition-all duration-300 ${
         stickyMenu
-          ? "glass-effect py-4! shadow-lg backdrop-blur-md"
+          ? "glass-effect py-3! sm:py-4! lg:py-5! shadow-lg backdrop-blur-md"
           : "bg-transparent"
       }`}
     >
-      <div className="relative mx-auto max-w-c-1390 items-center justify-between px-4 md:px-8 xl:flex 2xl:px-0">
+      <div className="relative mx-auto max-w-c-1390 items-center justify-between px-3 sm:px-4 md:px-6 lg:px-8 xl:flex 2xl:px-0">
         <div className="flex w-full items-center justify-between xl:w-1/4">
           <a href="/" className="hover-lift">
             <Image
@@ -43,24 +50,24 @@ const Header = () => {
               alt="Agarwal Samaj Logo"
               width={220}
               height={50}
-              className="hidden w-full dark:block transition-all duration-300"
+              className="hidden w-full dark:block transition-all duration-300 h-8 sm:h-10 lg:h-12"
             />
             <Image
               src="/images/logo/agarwal-logo-light-optimized.svg"
               alt="Agarwal Samaj Logo"
               width={220}
               height={50}
-              className="w-full dark:hidden transition-all duration-300"
+              className="w-full dark:hidden transition-all duration-300 h-8 sm:h-10 lg:h-12"
             />
           </a>
 
           {/* <!-- Hamburger Toggle BTN --> */}
           <button
             aria-label="hamburger Toggler"
-            className="block xl:hidden"
+            className="block xl:hidden p-2 -mr-2"
             onClick={() => setNavigationOpen(!navigationOpen)}
           >
-            <span className="relative block h-5.5 w-5.5 cursor-pointer">
+            <span className="relative block h-6 w-6 cursor-pointer">
               <span className="absolute right-0 block h-full w-full">
                 <span
                   className={`relative left-0 top-0 my-1 block h-0.5 rounded-sm bg-black delay-0 duration-200 ease-in-out dark:bg-white ${
@@ -99,23 +106,23 @@ const Header = () => {
         <div
           className={`invisible h-0 w-full items-center justify-between xl:visible xl:flex xl:h-auto xl:w-full ${
             navigationOpen &&
-            "navbar visible! mt-4 h-auto max-h-[400px] rounded-md bg-white p-7.5 shadow-solid-5 dark:bg-blacksection xl:h-auto xl:p-0 xl:shadow-none xl:dark:bg-transparent"
+            "navbar visible! mt-4 h-auto max-h-[400px] rounded-md bg-white p-4 sm:p-6 lg:p-7.5 shadow-solid-5 dark:bg-blacksection xl:h-auto xl:p-0 xl:shadow-none xl:dark:bg-transparent"
           }`}
         >
           <nav>
-            <ul className="flex flex-col gap-5 xl:flex-row xl:items-center xl:gap-10">
+            <ul className="flex flex-col gap-4 sm:gap-5 xl:flex-row xl:items-center xl:gap-8 lg:xl:gap-10">
               {menuData.map((menuItem, key) => (
                 <li key={key} className={menuItem.submenu && "group relative"}>
                   {menuItem.submenu ? (
                     <>
                       <button
                         onClick={() => setDropdownToggler(!dropdownToggler)}
-                        className="flex cursor-pointer items-center justify-between gap-3 hover:text-goldenrod"
+                        className="flex cursor-pointer items-center justify-between gap-2 sm:gap-3 hover:text-goldenrod text-sm sm:text-base lg:text-lg"
                       >
                         {menuItem.title}
                         <span>
                           <svg
-                            className="h-3 w-3 cursor-pointer fill-waterloo group-hover:fill-goldenrod"
+                            className="h-3 w-3 sm:h-4 sm:w-4 cursor-pointer fill-waterloo group-hover:fill-goldenrod"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 512 512"
                           >
@@ -137,7 +144,7 @@ const Header = () => {
                   ) : (
                     <Link
                       href={`${menuItem.path}`}
-                      className={`transition-all duration-300 hover:text-goldenrod hover:scale-105 ${
+                      className={`transition-all duration-300 hover:text-goldenrod hover:scale-105 text-sm sm:text-base lg:text-lg ${
                         pathUrl === menuItem.path
                           ? "text-goldenrod font-semibold"
                           : "text-waterloo dark:text-manatee"
@@ -151,11 +158,8 @@ const Header = () => {
             </ul>
           </nav>
 
-          <div className="mt-7 flex items-center gap-6 xl:mt-0">
+          <div className="mt-6 sm:mt-7 flex items-center gap-4 sm:gap-6 xl:mt-0">
             <ThemeToggler />
-
-           
-            
           </div>
         </div>
       </div>

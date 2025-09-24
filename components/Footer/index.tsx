@@ -5,11 +5,11 @@ import Image from "next/image";
 const Footer = () => {
   return (
     <>
-      <footer className="border-t border-stroke bg-gradient-to-b from-white to-alabaster dark:border-strokedark dark:from-blacksection dark:to-black">
+      <footer className="border-t border-primary-200 bg-gradient-to-b from-white via-primary-50 to-primary-100 dark:border-primary-800 dark:from-blacksection dark:via-primary-900/20 dark:to-primary-900/40">
         <div className="mx-auto max-w-c-1390 container-padding">
           {/* <!-- Footer Top --> */}
-          <div className="py-20 lg:py-25">
-            <div className="flex flex-wrap gap-8 lg:justify-between lg:gap-0">
+          <div className="py-12 sm:py-16 md:py-20 lg:py-25">
+            <div className="flex flex-wrap gap-6 sm:gap-8 lg:justify-between lg:gap-0">
               <motion.div
                 variants={{
                   hidden: {
@@ -26,7 +26,7 @@ const Footer = () => {
                 whileInView="visible"
                 transition={{ duration: 1, delay: 0.5 }}
                 viewport={{ once: true }}
-                className="animate_top w-1/2 lg:w-1/4"
+                className="animate_top w-full sm:w-1/2 lg:w-1/4"
               >
                 <a href="/" className="relative">
                   <Image
@@ -34,33 +34,33 @@ const Footer = () => {
                     height={50}
                     src="/images/logo/agarwal-logo-light-optimized.svg"
                     alt="Agarwal Samaj Logo"
-                    className="dark:hidden"
+                    className="dark:hidden h-8 sm:h-10 lg:h-12 w-auto"
                   />
                   <Image
                     width={220}
                     height={50}
                     src="/images/logo/agarwal-logo-premium-dark.svg"
                     alt="Agarwal Samaj Logo"
-                    className="hidden dark:block"
+                    className="hidden dark:block h-8 sm:h-10 lg:h-12 w-auto"
                   />
                 </a>
 
-                <p className="mb-10 mt-5">
+                <p className="mb-6 sm:mb-8 md:mb-10 mt-3 sm:mt-4 md:mt-5 text-sm sm:text-base">
                   A comprehensive community platform for the Agarwal community featuring matrimony, classifieds, and more.
                 </p>
 
-                <p className="mb-1.5 text-sectiontitle uppercase tracking-[5px]">
+                <p className="mb-1 sm:mb-1.5 text-xs sm:text-sm md:text-sectiontitle uppercase tracking-[3px] sm:tracking-[5px]">
                   contact
                 </p>
                 <a
                   href="#"
-                  className="text-itemtitle font-medium text-black dark:text-white"
+                  className="text-sm sm:text-base md:text-itemtitle font-medium text-black dark:text-white"
                 >
                   info@agarwalsamaj.com
                 </a>
               </motion.div>
 
-              <div className="flex w-full flex-col gap-8 md:flex-row md:justify-between md:gap-0 lg:w-2/3 xl:w-7/12">
+              <div className="flex w-full flex-col gap-6 sm:gap-8 md:flex-row md:justify-between md:gap-0 lg:w-2/3 xl:w-7/12">
                 <motion.div
                   variants={{
                     hidden: {
@@ -79,7 +79,7 @@ const Footer = () => {
                   viewport={{ once: true }}
                   className="animate_top"
                 >
-                  <h4 className="mb-9 text-itemtitle2 font-medium text-black dark:text-white">
+                  <h4 className="mb-6 sm:mb-7 md:mb-9 text-lg sm:text-xl md:text-itemtitle2 font-medium text-black dark:text-white">
                     Quick Links
                   </h4>
 
@@ -87,7 +87,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/"
-                        className="mb-3 inline-block hover:text-goldenrod"
+                        className="mb-2 sm:mb-3 inline-block hover:text-goldenrod text-sm sm:text-base"
                       >
                         Home
                       </a>
@@ -95,7 +95,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/matrimony"
-                        className="mb-3 inline-block hover:text-goldenrod"
+                        className="mb-2 sm:mb-3 inline-block hover:text-goldenrod text-sm sm:text-base"
                       >
                         Matrimony
                       </a>
@@ -103,7 +103,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/classified"
-                        className="mb-3 inline-block hover:text-goldenrod"
+                        className="mb-2 sm:mb-3 inline-block hover:text-goldenrod text-sm sm:text-base"
                       >
                         Classifieds
                       </a>
@@ -111,7 +111,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/membership"
-                        className="mb-3 inline-block hover:text-goldenrod"
+                        className="mb-2 sm:mb-3 inline-block hover:text-goldenrod text-sm sm:text-base"
                       >
                         Membership
                       </a>
@@ -137,7 +137,7 @@ const Footer = () => {
                   viewport={{ once: true }}
                   className="animate_top"
                 >
-                  <h4 className="mb-9 text-itemtitle2 font-medium text-black dark:text-white">
+                  <h4 className="mb-6 sm:mb-7 md:mb-9 text-lg sm:text-xl md:text-itemtitle2 font-medium text-black dark:text-white">
                     Support
                   </h4>
 
@@ -145,7 +145,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/about"
-                        className="mb-3 inline-block hover:text-goldenrod"
+                        className="mb-2 sm:mb-3 inline-block hover:text-goldenrod text-sm sm:text-base"
                       >
                         About Us
                       </a>
@@ -153,7 +153,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/blog"
-                        className="mb-3 inline-block hover:text-goldenrod"
+                        className="mb-2 sm:mb-3 inline-block hover:text-goldenrod text-sm sm:text-base"
                       >
                         Blog
                       </a>
@@ -161,7 +161,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/support"
-                        className="mb-3 inline-block hover:text-goldenrod"
+                        className="mb-2 sm:mb-3 inline-block hover:text-goldenrod text-sm sm:text-base"
                       >
                         Help & Support
                       </a>
@@ -169,7 +169,7 @@ const Footer = () => {
                     <li>
                       <a
                         href="/contact"
-                        className="mb-3 inline-block hover:text-goldenrod"
+                        className="mb-2 sm:mb-3 inline-block hover:text-goldenrod text-sm sm:text-base"
                       >
                         Contact Us
                       </a>
@@ -195,10 +195,10 @@ const Footer = () => {
                   viewport={{ once: true }}
                   className="animate_top"
                 >
-                  <h4 className="mb-9 text-itemtitle2 font-medium text-black dark:text-white">
+                  <h4 className="mb-6 sm:mb-7 md:mb-9 text-lg sm:text-xl md:text-itemtitle2 font-medium text-black dark:text-white">
                     Newsletter
                   </h4>
-                  <p className="mb-4 w-[90%]">
+                  <p className="mb-3 sm:mb-4 w-[90%] text-sm sm:text-base">
                     Subscribe to receive future updates
                   </p>
 
@@ -207,17 +207,17 @@ const Footer = () => {
                       <input
                         type="text"
                         placeholder="Email address"
-                        className="w-full rounded-full border border-stroke px-6 py-3 shadow-solid-11 focus:border-primary focus:outline-hidden dark:border-strokedark dark:bg-black dark:shadow-none dark:focus:border-primary"
+                        className="w-full rounded-full border border-stroke px-4 sm:px-6 py-2 sm:py-3 shadow-solid-11 focus:border-primary focus:outline-hidden dark:border-strokedark dark:bg-black dark:shadow-none dark:focus:border-primary text-sm sm:text-base"
                       />
 
                       <button
                         aria-label="signup to newsletter"
-                        className="absolute right-0 p-4"
+                        className="absolute right-0 p-2 sm:p-3 md:p-4"
                       >
                         <svg
                           className="fill-[#757693] hover:fill-primary dark:fill-white"
-                          width="20"
-                          height="20"
+                          width="16"
+                          height="16"
                           viewBox="0 0 20 20"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
@@ -244,7 +244,7 @@ const Footer = () => {
           {/* <!-- Footer Top --> */}
 
           {/* <!-- Footer Bottom --> */}
-          <div className="flex flex-col flex-wrap items-center justify-center gap-5 border-t border-stroke py-7 dark:border-strokedark lg:flex-row lg:justify-between lg:gap-0">
+          <div className="flex flex-col flex-wrap items-center justify-center gap-4 sm:gap-5 border-t border-stroke py-5 sm:py-6 md:py-7 dark:border-strokedark lg:flex-row lg:justify-between lg:gap-0">
             <motion.div
               variants={{
                 hidden: {
@@ -263,19 +263,19 @@ const Footer = () => {
               viewport={{ once: true }}
               className="animate_top"
             >
-              <ul className="flex items-center gap-8">
+              <ul className="flex items-center gap-4 sm:gap-6 md:gap-8">
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <a href="#" className="hover:text-primary text-sm sm:text-base">
                     English
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <a href="#" className="hover:text-primary text-sm sm:text-base">
                     Privacy Policy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <a href="#" className="hover:text-primary text-sm sm:text-base">
                     Support
                   </a>
                 </li>
@@ -300,7 +300,7 @@ const Footer = () => {
               viewport={{ once: true }}
               className="animate_top"
             >
-              <p>
+              <p className="text-sm sm:text-base text-center">
                 &copy; {new Date().getFullYear()} Agarwal Samaj. All rights reserved
               </p>
             </motion.div>
@@ -323,13 +323,13 @@ const Footer = () => {
               viewport={{ once: true }}
               className="animate_top"
             >
-              <ul className="flex items-center gap-5">
+              <ul className="flex items-center gap-3 sm:gap-4 md:gap-5">
                 <li>
                   <a href="#" aria-label="social icon">
                     <svg
                       className="fill-[#D1D8E0] transition-all duration-300 hover:fill-goldenrod"
-                      width="24"
-                      height="24"
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -352,8 +352,8 @@ const Footer = () => {
                   <a href="#" aria-label="social icon">
                     <svg
                       className="fill-[#D1D8E0] transition-all duration-300 hover:fill-goldenrod"
-                      width="24"
-                      height="24"
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -376,8 +376,8 @@ const Footer = () => {
                   <a href="#" aria-label="social icon">
                     <svg
                       className="fill-[#D1D8E0] transition-all duration-300 hover:fill-goldenrod"
-                      width="24"
-                      height="24"
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -400,8 +400,8 @@ const Footer = () => {
                   <a href="#" aria-label="social icon">
                     <svg
                       className="fill-[#D1D8E0] transition-all duration-300 hover:fill-goldenrod"
-                      width="24"
-                      height="24"
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
                       xmlns="http://www.w3.org/2000/svg"
                     >

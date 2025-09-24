@@ -147,8 +147,8 @@ const Contact = () => {
   return (
     <>
       {/* <!-- ===== Contact Start ===== --> */}
-      <section id="support" className="px-4 md:px-8 2xl:px-0">
-        <div className="relative mx-auto max-w-c-1390 px-7.5 pt-10 lg:px-15 lg:pt-15 xl:px-20 xl:pt-20">
+      <section id="support" className="px-3 sm:px-4 md:px-6 lg:px-8 2xl:px-0">
+        <div className="relative mx-auto max-w-c-1390 px-4 sm:px-6 md:px-7.5 pt-8 sm:pt-10 lg:px-15 lg:pt-15 xl:px-20 xl:pt-20">
           <div className="absolute left-0 top-0 -z-1 h-2/3 w-full rounded-lg bg-linear-to-t from-transparent to-[#dee7ff47] dark:bg-linear-to-t dark:to-[#252A42]"></div>
           <div className="absolute bottom-[-255px] left-0 -z-1 h-full w-full">
             <Image
@@ -165,7 +165,7 @@ const Contact = () => {
             />
           </div>
 
-          <div className="flex flex-col-reverse flex-wrap gap-8 md:flex-row md:flex-nowrap md:justify-between xl:gap-20">
+          <div className="flex flex-col-reverse flex-wrap gap-6 sm:gap-8 md:flex-row md:flex-nowrap md:justify-between xl:gap-20">
             <motion.div
               variants={{
                 hidden: {
@@ -182,9 +182,9 @@ const Contact = () => {
               whileInView="visible"
               transition={{ duration: 1, delay: 0.1 }}
               viewport={{ once: true }}
-              className="animate_top w-full rounded-lg bg-white p-7.5 shadow-solid-8 dark:border dark:border-strokedark dark:bg-black md:w-3/5 lg:w-3/4 xl:p-15"
+              className="animate_top w-full rounded-lg bg-white p-4 sm:p-6 md:p-7.5 shadow-solid-8 dark:border dark:border-strokedark dark:bg-black md:w-3/5 lg:w-3/4 xl:p-15"
             >
-              <h2 className="mb-15 text-3xl font-semibold text-black dark:text-white xl:text-sectiontitle2">
+              <h2 className="mb-8 sm:mb-12 md:mb-15 text-xl sm:text-2xl md:text-3xl font-semibold text-black dark:text-white xl:text-sectiontitle2">
                 Send a message
               </h2>
 
@@ -206,7 +206,7 @@ const Contact = () => {
               )}
 
               <form onSubmit={handleSubmit}>
-                <div className="mb-7.5 flex flex-col gap-7.5 lg:flex-row lg:justify-between lg:gap-14">
+                <div className="mb-6 sm:mb-7.5 flex flex-col gap-4 sm:gap-6 lg:flex-row lg:justify-between lg:gap-14">
                   <div className="lg:w-1/2">
                     <input
                       type="text"
@@ -214,14 +214,14 @@ const Contact = () => {
                       placeholder="Full name"
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      className={`w-full border-b bg-transparent pb-3.5 focus:placeholder:text-black focus-visible:outline-hidden dark:focus:placeholder:text-white ${
+                      className={`w-full border-b bg-transparent pb-2 sm:pb-3 md:pb-3.5 focus:placeholder:text-black focus-visible:outline-hidden dark:focus:placeholder:text-white text-sm sm:text-base ${
                         errors.fullName 
                           ? "border-red-500 focus:border-red-500" 
                           : "border-stroke focus:border-waterloo dark:border-strokedark dark:focus:border-manatee"
                       }`}
                     />
                     {errors.fullName && (
-                      <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>
+                      <p className="mt-1 text-xs sm:text-sm text-red-500">{errors.fullName}</p>
                     )}
                   </div>
 
@@ -232,19 +232,19 @@ const Contact = () => {
                       placeholder="Email address"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`w-full border-b bg-transparent pb-3.5 focus:placeholder:text-black focus-visible:outline-hidden dark:focus:placeholder:text-white ${
+                      className={`w-full border-b bg-transparent pb-2 sm:pb-3 md:pb-3.5 focus:placeholder:text-black focus-visible:outline-hidden dark:focus:placeholder:text-white text-sm sm:text-base ${
                         errors.email 
                           ? "border-red-500 focus:border-red-500" 
                           : "border-stroke focus:border-waterloo dark:border-strokedark dark:focus:border-manatee"
                       }`}
                     />
                     {errors.email && (
-                      <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                      <p className="mt-1 text-xs sm:text-sm text-red-500">{errors.email}</p>
                     )}
                   </div>
                 </div>
 
-                <div className="mb-12.5 flex flex-col gap-7.5 lg:flex-row lg:justify-between lg:gap-14">
+                <div className="mb-8 sm:mb-10 md:mb-12.5 flex flex-col gap-4 sm:gap-6 lg:flex-row lg:justify-between lg:gap-14">
                   <div className="lg:w-1/2">
                     <input
                       type="text"
@@ -252,14 +252,14 @@ const Contact = () => {
                       placeholder="Subject"
                       value={formData.subject}
                       onChange={handleInputChange}
-                      className={`w-full border-b bg-transparent pb-3.5 focus:placeholder:text-black focus-visible:outline-hidden dark:focus:placeholder:text-white ${
+                      className={`w-full border-b bg-transparent pb-2 sm:pb-3 md:pb-3.5 focus:placeholder:text-black focus-visible:outline-hidden dark:focus:placeholder:text-white text-sm sm:text-base ${
                         errors.subject 
                           ? "border-red-500 focus:border-red-500" 
                           : "border-stroke focus:border-waterloo dark:border-strokedark dark:focus:border-manatee"
                       }`}
                     />
                     {errors.subject && (
-                      <p className="mt-1 text-sm text-red-500">{errors.subject}</p>
+                      <p className="mt-1 text-xs sm:text-sm text-red-500">{errors.subject}</p>
                     )}
                   </div>
 
@@ -270,40 +270,40 @@ const Contact = () => {
                       placeholder="Phone number"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className={`w-full border-b bg-transparent pb-3.5 focus:placeholder:text-black focus-visible:outline-hidden dark:focus:placeholder:text-white ${
+                      className={`w-full border-b bg-transparent pb-2 sm:pb-3 md:pb-3.5 focus:placeholder:text-black focus-visible:outline-hidden dark:focus:placeholder:text-white text-sm sm:text-base ${
                         errors.phone 
                           ? "border-red-500 focus:border-red-500" 
                           : "border-stroke focus:border-waterloo dark:border-strokedark dark:focus:border-manatee"
                       }`}
                     />
                     {errors.phone && (
-                      <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
+                      <p className="mt-1 text-xs sm:text-sm text-red-500">{errors.phone}</p>
                     )}
                   </div>
                 </div>
 
-                <div className="mb-11.5 flex">
+                <div className="mb-8 sm:mb-10 md:mb-11.5 flex">
                   <div className="w-full">
                     <textarea
                       name="message"
                       placeholder="Message"
-                      rows={4}
+                      rows={3}
                       value={formData.message}
                       onChange={handleInputChange}
-                      className={`w-full border-b bg-transparent focus:placeholder:text-black focus-visible:outline-hidden dark:focus:placeholder:text-white ${
+                      className={`w-full border-b bg-transparent focus:placeholder:text-black focus-visible:outline-hidden dark:focus:placeholder:text-white text-sm sm:text-base resize-none ${
                         errors.message 
                           ? "border-red-500 focus:border-red-500" 
                           : "border-stroke focus:border-waterloo dark:border-strokedark dark:focus:border-manatee"
                       }`}
                     ></textarea>
                     {errors.message && (
-                      <p className="mt-1 text-sm text-red-500">{errors.message}</p>
+                      <p className="mt-1 text-xs sm:text-sm text-red-500">{errors.message}</p>
                     )}
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-4 xl:justify-between ">
-                  <div className="mb-4 flex md:mb-0">
+                <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 xl:justify-between">
+                  <div className="mb-3 sm:mb-4 flex md:mb-0">
                     <input
                       id="agreeToTerms"
                       name="agreeToTerms"
@@ -312,13 +312,13 @@ const Contact = () => {
                       onChange={handleInputChange}
                       className="peer sr-only"
                     />
-                    <span className={`border-gray-300 bg-gray-100 text-blue-600 dark:border-gray-600 dark:bg-gray-700 group mt-2 flex h-5 min-w-[20px] items-center justify-center rounded-sm ${
+                    <span className={`border-gray-300 bg-gray-100 text-blue-600 dark:border-gray-600 dark:bg-gray-700 group mt-1 sm:mt-2 flex h-4 sm:h-5 min-w-[16px] sm:min-w-[20px] items-center justify-center rounded-sm ${
                       formData.agreeToTerms ? "bg-primary" : ""
                     }`}>
                       <svg
                         className={`${formData.agreeToTerms ? "opacity-100" : "opacity-0"} in-[.group]:peer-checked:opacity-100`}
-                        width="10"
-                        height="8"
+                        width="8"
+                        height="6"
                         viewBox="0 0 10 8"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -333,21 +333,21 @@ const Contact = () => {
                     </span>
                     <label
                       htmlFor="agreeToTerms"
-                      className="flex max-w-[425px] cursor-pointer select-none pl-5"
+                      className="flex max-w-[425px] cursor-pointer select-none pl-3 sm:pl-5 text-xs sm:text-sm"
                     >
                       By clicking Checkbox, you agree to use our "Form" terms
                       And consent cookie usage in browser.
                     </label>
                   </div>
                   {errors.agreeToTerms && (
-                    <p className="text-sm text-red-500 mt-2">{errors.agreeToTerms}</p>
+                    <p className="text-xs sm:text-sm text-red-500 mt-1 sm:mt-2">{errors.agreeToTerms}</p>
                   )}
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     aria-label="send message"
-                    className={`inline-flex items-center gap-2.5 rounded-full px-6 py-3 font-medium text-white duration-300 ease-in-out ${
+                    className={`inline-flex items-center gap-2 sm:gap-2.5 rounded-full px-4 sm:px-6 py-2 sm:py-3 font-medium text-white duration-300 ease-in-out text-sm sm:text-base ${
                       isSubmitting 
                         ? "bg-gray-400 cursor-not-allowed" 
                         : "bg-black hover:bg-blackho dark:bg-btndark"
@@ -355,7 +355,7 @@ const Contact = () => {
                   >
                     {isSubmitting ? (
                       <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin -ml-1 mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -366,8 +366,8 @@ const Contact = () => {
                         Send Message
                         <svg
                           className="fill-white"
-                          width="14"
-                          height="14"
+                          width="12"
+                          height="12"
                           viewBox="0 0 14 14"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
@@ -400,35 +400,35 @@ const Contact = () => {
               whileInView="visible"
               transition={{ duration: 2, delay: 0.1 }}
               viewport={{ once: true }}
-              className="animate_top w-full md:w-2/5 md:p-7.5 lg:w-[26%] xl:pt-15"
+              className="animate_top w-full md:w-2/5 md:p-4 sm:md:p-6 lg:md:p-7.5 lg:w-[26%] xl:pt-15"
             >
-              <h2 className="mb-12.5 text-3xl font-semibold text-black dark:text-white xl:text-sectiontitle2">
+              <h2 className="mb-8 sm:mb-10 md:mb-12.5 text-xl sm:text-2xl md:text-3xl font-semibold text-black dark:text-white xl:text-sectiontitle2">
                 Find us
               </h2>
 
-              <div className="5 mb-7">
-                <h3 className="mb-4 text-metatitle3 font-medium text-black dark:text-white">
+              <div className="mb-5 sm:mb-6 md:mb-7">
+                <h3 className="mb-2 sm:mb-3 md:mb-4 text-base sm:text-lg md:text-metatitle3 font-medium text-black dark:text-white">
                   Our Location
                 </h3>
-                <p>290 Maryam Springs 260, Courbevoie, Paris, France</p>
+                <p className="text-sm sm:text-base">Agarwal Samaj Community Center, Delhi, India</p>
               </div>
-              <div className="5 mb-7">
-                <h3 className="mb-4 text-metatitle3 font-medium text-black dark:text-white">
+              <div className="mb-5 sm:mb-6 md:mb-7">
+                <h3 className="mb-2 sm:mb-3 md:mb-4 text-base sm:text-lg md:text-metatitle3 font-medium text-black dark:text-white">
                   Email Address
                 </h3>
                 <p>
-                  <a href="mailto:yourmail@domainname.com" className="text-primary hover:underline">
-                    yourmail@domainname.com
+                  <a href="mailto:info@agarwalsamaj.com" className="text-primary hover:underline text-sm sm:text-base">
+                    info@agarwalsamaj.com
                   </a>
                 </p>
               </div>
               <div>
-                <h4 className="mb-4 text-metatitle3 font-medium text-black dark:text-white">
+                <h4 className="mb-2 sm:mb-3 md:mb-4 text-base sm:text-lg md:text-metatitle3 font-medium text-black dark:text-white">
                   Phone Number
                 </h4>
                 <p>
-                  <a href="tel:+009423346343843" className="text-primary hover:underline">
-                    +009 42334 6343 843
+                  <a href="tel:+911234567890" className="text-primary hover:underline text-sm sm:text-base">
+                    +91 12345 67890
                   </a>
                 </p>
               </div>
