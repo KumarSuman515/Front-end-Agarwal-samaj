@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { GalleryAlbum } from "@/types/gallery";
+import { API_ENDPOINTS, getImageUrl as getFullImageUrl } from "@/lib/api/config";
 
 const AlbumList = () => {
   const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
@@ -15,7 +16,7 @@ const AlbumList = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch('http://localhost:4005/api/albums');
+        const response = await fetch(API_ENDPOINTS.albums);
         if (!response.ok) {
           throw new Error(`Failed to fetch albums: ${response.status}`);
         }
@@ -43,7 +44,7 @@ const AlbumList = () => {
   const getImageUrl = (imageUrl: string | null | undefined) => {
     if (!imageUrl || imageUrl.trim() === '') return null;
     try {
-      const fullUrl = `http://localhost:4005${imageUrl}`;
+      const fullUrl = getFullImageUrl(imageUrl);
       new URL(fullUrl); // Validate URL format
       return fullUrl;
     } catch {

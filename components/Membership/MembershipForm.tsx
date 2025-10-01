@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useToast } from "@/app/context/ToastContext";
 import { useHeader } from "@/app/context/HeaderContext";
+import { API_ENDPOINTS } from "@/lib/api/config";
 
 interface MembershipFormProps {
   isOpen: boolean;
@@ -272,7 +273,7 @@ const MembershipForm: React.FC<MembershipFormProps> = ({ isOpen, onClose }) => {
       console.log("Photos:", uploadedPhotos);
       
       // Submit to backend directly
-      const response = await axios.post('http://localhost:4005/api/membership', submitData, {
+      const response = await axios.post(API_ENDPOINTS.membership, submitData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

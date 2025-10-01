@@ -3,6 +3,7 @@ import Link from "next/link";
 import SectionHeader from "../Common/SectionHeader";
 import BlogItem from "./BlogItem";
 import type { Blog } from "@/types/blog";
+import { API_ENDPOINTS, getImageUrl } from "@/lib/api/config";
 
 // Transform API data to match frontend Blog type
 const transformBlogPost = (apiPost: any) => {
@@ -14,7 +15,7 @@ const transformBlogPost = (apiPost: any) => {
       mainImage = apiPost.thumbnail_url;
     } else {
       // It's just a filename, prepend the backend uploads path
-      mainImage = `http://localhost:4005/uploads/${apiPost.thumbnail_url}`;
+      mainImage = getImageUrl(apiPost.thumbnail_url);
     }
   }
 
@@ -42,7 +43,7 @@ const Blog = async () => {
   let error: string | null = null;
 
   try {
-    const response = await fetch('http://localhost:4005/api/blogs', {
+    const response = await fetch(API_ENDPOINTS.blogs, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

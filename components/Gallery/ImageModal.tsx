@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 import { GalleryImage } from "@/types/gallery";
+import { getImageUrl as getFullImageUrl } from "@/lib/api/config";
 
 interface ImageModalProps {
   image: GalleryImage;
@@ -20,7 +21,7 @@ const ImageModal = ({ image, images, currentIndex, isOpen, onClose, onNext, onPr
     try {
       // Normalize path separators for cross-platform compatibility
       const normalizedPath = imageUrl.replace(/\\/g, '/');
-      const fullUrl = `http://localhost:4005/${normalizedPath}`;
+      const fullUrl = getFullImageUrl(normalizedPath);
       new URL(fullUrl); // Validate URL format
       return fullUrl;
     } catch {

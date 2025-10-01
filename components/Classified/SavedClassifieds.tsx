@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import ContactModal from "./ContactModal";
 import { useToast } from "@/app/context/ToastContext";
+import { API_ENDPOINTS, getImageUrl } from "@/lib/api/config";
 
 interface ClassifiedItem {
   id: number;
@@ -33,7 +34,7 @@ const SavedClassifieds = ({ onClose }: SavedClassifiedsProps) => {
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedContactItem, setSelectedContactItem] = useState<ClassifiedItem | null>(null);
 
-  const API_BASE_URL = "http://localhost:4005/api/classifieds";
+  const API_BASE_URL = API_ENDPOINTS.classifieds;
 
   // Load saved classifieds from localStorage
   useEffect(() => {
@@ -163,7 +164,7 @@ const SavedClassifieds = ({ onClose }: SavedClassifiedsProps) => {
                   {business.photos && business.photos.split(',').length > 0 && (
                     <div className="h-48 overflow-hidden rounded-t-lg">
                       <img
-                        src={`http://localhost:4005/uploads/${business.photos.split(',')[0]}`}
+                        src={getImageUrl(business.photos.split(',')[0])}
                         alt={`${business.firm_name} business photo`}
                         className="w-full h-full object-cover"
                         onError={(e) => {

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
+import { API_ENDPOINTS, getImageUrl as getFullImageUrl } from "@/lib/api/config";
 
 interface Profile {
   id: number;
@@ -35,7 +36,7 @@ const getImageUrl = (imagePath: string): string => {
   if (imagePath.startsWith('http')) {
     return imagePath;
   }
-  return `http://localhost:4005/uploads/${imagePath}`;
+  return getFullImageUrl(imagePath);
 };
 
 const MatrimonyPreview = () => {
@@ -47,7 +48,7 @@ const MatrimonyPreview = () => {
     const fetchProfiles = async () => {
       try {
         setLoading(true);
-        const res = await axios.get<Profile[]>("http://localhost:4005/api/candidates");
+        const res = await axios.get<Profile[]>(API_ENDPOINTS.candidates);
         const profiles = Array.isArray(res.data) ? res.data.slice(0, 3) : [];
         setFeaturedProfiles(profiles);
       } catch (error) {

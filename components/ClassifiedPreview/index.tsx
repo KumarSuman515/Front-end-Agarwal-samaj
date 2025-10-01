@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
+import { API_ENDPOINTS } from "@/lib/api/config";
 
 interface ClassifiedItem {
   id: number;
@@ -43,7 +44,7 @@ const ClassifiedPreview = () => {
         setLoading(true);
         setError(null);
         
-        const response = await axios.get('http://localhost:4005/api/classifieds');
+        const response = await axios.get(API_ENDPOINTS.classifieds);
         
         if (response.data && response.data.length > 0) {
           // Filter only approved classifieds

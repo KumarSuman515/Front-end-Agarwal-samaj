@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import axios from "axios";
+import { API_ENDPOINTS } from "@/lib/api/config";
 // import ToastProvider from "@/app/context/ToastContext";
 
 type CreateProfileProps = {
@@ -581,10 +582,10 @@ const CreateProfile = ({ onClose, onSave }: CreateProfileProps) => {
       console.log("[Matrimony] Submitting candidate payload →", previewPayload);
   
       // ---------------- API Request ----------------
-      console.log("Sending request to:", "http://localhost:4005/api/candidates");
+      console.log("Sending request to:", API_ENDPOINTS.candidates);
       console.log("Form data being sent:", Object.fromEntries(multipart.entries()));
       
-      const response = await axios.post("http://localhost:4005/api/candidates", multipart, {
+      const response = await axios.post(API_ENDPOINTS.candidates, multipart, {
          timeout: 30000, // 30 second timeout
        });
       

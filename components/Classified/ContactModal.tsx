@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useToast } from "@/app/context/ToastContext";
+import { API_ENDPOINTS } from "@/lib/api/config";
 
 interface ClassifiedItem {
   id: number;
@@ -41,7 +42,7 @@ const ContactModal = ({ classified, onClose }: ContactModalProps) => {
   const fetchBusinessDetails = async (id: number) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:4005/api/classifieds/${id}`);
+      const response = await fetch(API_ENDPOINTS.classifiedDetail(String(id)));
       if (!response.ok) {
         throw new Error('Failed to fetch business details');
       }

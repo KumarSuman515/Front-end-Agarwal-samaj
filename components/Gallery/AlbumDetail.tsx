@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { GalleryAlbum, GalleryImage } from "@/types/gallery";
 import ImageModal from "@/components/Gallery/ImageModal";
+import { API_ENDPOINTS, getImageUrl as getFullImageUrl } from "@/lib/api/config";
 
 interface AlbumDetailProps {
   albumId: number;
@@ -25,8 +26,8 @@ const AlbumDetail = ({ albumId }: AlbumDetailProps) => {
         setLoading(true);
         setError(null);
         const [albumResponse, imagesResponse] = await Promise.all([
-          fetch(`http://localhost:4005/api/albums/${albumId}`),
-          fetch(`http://localhost:4005/api/albums/${albumId}/images`)
+          fetch(API_ENDPOINTS.albumDetail(String(albumId))),
+          fetch(API_ENDPOINTS.albumImages(String(albumId)))
         ]);
         
         if (!albumResponse.ok) {
@@ -103,7 +104,7 @@ const AlbumDetail = ({ albumId }: AlbumDetailProps) => {
     try {
       // Normalize path separators for cross-platform compatibility
       const normalizedPath = imageUrl.replace(/\\/g, '/');
-      const fullUrl = `http://localhost:4005/${normalizedPath}`;
+      const fullUrl = getFullImageUrl(normalizedPath);
       new URL(fullUrl); // Validate URL format
       console.log('Valid URL created:', fullUrl);
       return fullUrl;

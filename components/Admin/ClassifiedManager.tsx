@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useToast } from "@/app/context/ToastContext";
+import { API_ENDPOINTS } from "@/lib/api/config";
 
 interface Classified {
   id: number;
@@ -44,7 +45,7 @@ const ClassifiedManager = () => {
         params.append("search", searchTerm);
       }
 
-      const response = await fetch(`http://localhost:4005/api/classifieds?${params}`);
+      const response = await fetch(`${API_ENDPOINTS.classifieds}?${params}`);
       if (!response.ok) throw new Error("Failed to fetch classifieds");
 
       const data = await response.json();
@@ -63,7 +64,7 @@ const ClassifiedManager = () => {
 
   const handleStatusChange = async (id: number, status: string) => {
     try {
-      const response = await fetch(`http://localhost:4005/api/classifieds/${id}/status`, {
+      const response = await fetch(API_ENDPOINTS.classifiedUpdateStatus(id.toString()), {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -83,7 +84,7 @@ const ClassifiedManager = () => {
 
   const handleToggleFeatured = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:4005/api/classifieds/${id}/featured`, {
+      const response = await fetch(API_ENDPOINTS.classifiedUpdateFeatured(id.toString()), {
         method: "PATCH",
       });
 
@@ -102,7 +103,7 @@ const ClassifiedManager = () => {
     if (!confirm("Are you sure you want to delete this classified?")) return;
 
     try {
-      const response = await fetch(`http://localhost:4005/api/classifieds/${id}`, {
+      const response = await fetch(API_ENDPOINTS.classifiedDetail(id.toString()), {
         method: "DELETE",
       });
 

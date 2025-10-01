@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import { useToast } from "@/app/context/ToastContext";
+import { API_ENDPOINTS } from "@/lib/api/config";
 
 interface CreateClassifiedModalProps {
   onClose: () => void;
@@ -323,7 +324,7 @@ const CreateClassifiedModal = ({ onClose, onSuccess }: CreateClassifiedModalProp
         formDataToSend.append('photos', photo);
       });
 
-      const response = await fetch("http://localhost:4005/api/classifieds/register", {
+      const response = await fetch(API_ENDPOINTS.classifiedsRegister, {
         method: "POST",
         body: formDataToSend,
       });

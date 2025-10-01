@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
+import { API_ENDPOINTS, getImageUrl } from "@/lib/api/config";
 
 interface GalleryAlbum {
   album_id: number;
@@ -27,7 +28,7 @@ const GalleryPreview = () => {
         setLoading(true);
         setError(null);
         
-        const response = await axios.get('http://localhost:4005/api/albums');
+        const response = await axios.get(API_ENDPOINTS.albums);
         console.log("Gallery API Response:", response.data);
         
         // Handle different response structures
@@ -143,16 +144,7 @@ const GalleryPreview = () => {
                   <div key={album.album_id} className="p-2 bg-white dark:bg-gray-700 rounded">
                     <div><strong>Album {index + 1}:</strong> {album.album_title}</div>
                     <div><strong>Image URL:</strong> {album.cover_image_url || 'No image'}</div>
-                    <div><strong>Constructed URL:</strong> {album.cover_image_url ? (() => {
-                      let imageUrl = album.cover_image_url;
-                      if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-                        return imageUrl;
-                      } else if (imageUrl.startsWith('/')) {
-                        return `http://localhost:4005${imageUrl}`;
-                      } else {
-                        return `http://localhost:4005/uploads/${imageUrl}`;
-                      }
-                    })() : 'N/A'}</div>
+                    <div><strong>Constructed URL:</strong> {album.cover_image_url ? getImageUrl(album.cover_image_url) : 'N/A'}</div>
                   </div>
                 ))}
               </div>
@@ -185,18 +177,7 @@ const GalleryPreview = () => {
                        {album.cover_image_url && album.cover_image_url.trim() !== "" ? (
                          <div className="absolute inset-0">
                            <Image
-                             src={(() => {
-                               let imageUrl = album.cover_image_url;
-                               
-                               // Handle different image path formats
-                               if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-                                 return imageUrl;
-                               } else if (imageUrl.startsWith('/')) {
-                                 return `http://localhost:4005${imageUrl}`;
-                               } else {
-                                 return `http://localhost:4005/uploads/${imageUrl}`;
-                               }
-                             })()}
+                            src={getImageUrl(album.cover_image_url)}
                              alt={album.album_title}
                              fill
                              className="object-cover"

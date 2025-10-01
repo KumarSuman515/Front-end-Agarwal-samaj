@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useToast } from "@/app/context/ToastContext";
+import { API_ENDPOINTS } from "@/lib/api/config";
 
 interface BusinessStatsProps {
   className?: string;
@@ -33,7 +34,7 @@ const BusinessStats = ({ className = "" }: BusinessStatsProps) => {
       setLoading(true);
       
       // Fetch all businesses for statistics
-      const response = await fetch("http://localhost:4005/api/classifieds/search");
+      const response = await fetch(API_ENDPOINTS.classifiedsSearch);
       if (!response.ok) {
         throw new Error('Failed to fetch stats');
       }

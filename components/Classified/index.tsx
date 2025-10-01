@@ -27,7 +27,9 @@ interface ClassifiedItem {
 }
 
 // API Base URL
-const API_BASE_URL = "http://localhost:4005/api/classifieds";
+import { API_ENDPOINTS, getImageUrl } from "@/lib/api/config";
+
+const API_BASE_URL = API_ENDPOINTS.classifieds;
 
 const Classified = () => {
   const { showToast } = useToast();
@@ -307,7 +309,7 @@ const Classified = () => {
                   {business.photos && business.photos.split(',').length > 0 && (
                     <div className="h-48 overflow-hidden">
                       <img
-                        src={`http://localhost:4005/uploads/${business.photos.split(',')[0]}`}
+                        src={getImageUrl(business.photos.split(',')[0])}
                         alt={`${business.firm_name} business photo`}
                         className="w-full h-full object-cover"
                         onError={(e) => {

@@ -4,6 +4,7 @@ import SectionHeader from "@/components/Common/SectionHeader";
 import CreateProfile from "./CreateProfile";
 import axios from "axios";
 import { useToast } from "@/app/context/ToastContext";
+import { API_ENDPOINTS, getImageUrl as getFullImageUrl } from "@/lib/api/config";
 
 // Profile type that matches the backend data structure
 interface Profile {
@@ -95,7 +96,7 @@ const getImageUrl = (imagePath: string): string => {
     return imagePath;
   }
   // If it's a filename from uploads, construct the full URL
-  return `http://localhost:4005/uploads/${imagePath}`;
+  return getFullImageUrl(imagePath);
 };
 
 const Matrimony = () => {
@@ -124,7 +125,7 @@ const Matrimony = () => {
   const fetchProfiles = async () => {
     try {
       setLoading(true);
-      const res = await axios.get<Profile[]>("http://localhost:4005/api/candidates");
+      const res = await axios.get<Profile[]>(API_ENDPOINTS.candidates);
       const profiles = Array.isArray(res.data) ? res.data : [];
       console.log("Fetched profiles:", profiles);
       setOriginalProfiles(profiles);
@@ -216,7 +217,7 @@ const Matrimony = () => {
         showToast("Please enter your name and email", "warning");
         return;
       }
-      await axios.post(`http://localhost:4005/api/candidates/${connectProfile.id}/connect`, {
+      await axios.post(API_ENDPOINTS.candidateConnect(connectProfile.id.toString()), {
         senderName:senderName,
         senderEmail:senderEmail,
         message: connectMessage,

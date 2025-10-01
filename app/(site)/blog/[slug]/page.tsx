@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import RelatedPost from "@/components/Blog/RelatedPost";
 import SharePost from "@/components/Blog/SharePost";
 import { Blog } from "@/types/blog";
+import { API_ENDPOINTS, getImageUrl } from "@/lib/api/config";
 
 interface BlogPageProps {
   params: Promise<{
@@ -22,7 +23,7 @@ const transformBlogPost = (apiPost: any) => {
       mainImage = apiPost.thumbnail_url;
     } else {
       // It's just a filename, prepend the backend uploads path
-      mainImage = `http://localhost:4005/uploads/${apiPost.thumbnail_url}`;
+      mainImage = getImageUrl(apiPost.thumbnail_url);
     }
   }
 
@@ -50,7 +51,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   const resolvedParams = await params;
   
   try {
-    const response = await fetch('http://localhost:4005/api/blogs', {
+    const response = await fetch(API_ENDPOINTS.blogs, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -94,7 +95,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 // Generate static params for all blog posts
 export async function generateStaticParams() {
   try {
-    const response = await fetch('http://localhost:4005/api/blogs', {
+    const response = await fetch(API_ENDPOINTS.blogs, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -121,7 +122,7 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
   const resolvedParams = await params;
   
   try {
-    const response = await fetch('http://localhost:4005/api/blogs', {
+    const response = await fetch(API_ENDPOINTS.blogs, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

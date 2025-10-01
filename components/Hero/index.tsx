@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { API_ENDPOINTS, getImageUrl } from "@/lib/api/config";
 
 interface SliderImage {
   id: number;
@@ -25,7 +26,7 @@ const Hero = () => {
         setLoading(true);
         setError(null);
               
-        const response = await axios.get('http://localhost:4005/api/sliders');
+        const response = await axios.get(API_ENDPOINTS.sliders);
         console.log("API Response:", response.data);
         
         const data = response.data;
@@ -124,7 +125,7 @@ const Hero = () => {
                 <div className="w-full h-full relative overflow-hidden">
                   {image.image_path ? (
                     <Image
-                      src={image.image_path.startsWith('http') ? image.image_path : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4005'}${image.image_path}`}
+                      src={getImageUrl(image.image_path)}
                       alt={image.alt_text || "Slider Image"}
                       fill
                       className="object-cover"

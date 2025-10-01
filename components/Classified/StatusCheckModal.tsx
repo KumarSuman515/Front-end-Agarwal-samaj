@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import { useToast } from "@/app/context/ToastContext";
+import { API_ENDPOINTS } from "@/lib/api/config";
 
 interface StatusCheckModalProps {
   onClose: () => void;
@@ -40,7 +41,7 @@ const StatusCheckModal = ({ onClose }: StatusCheckModalProps) => {
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:4005/api/classifieds/status/${encodeURIComponent(contact)}`);
+      const response = await fetch(API_ENDPOINTS.classifiedStatus(contact));
       
       if (!response.ok) {
         if (response.status === 404) {
