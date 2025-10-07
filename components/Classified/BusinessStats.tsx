@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useToast } from "@/app/context/ToastContext";
 import { API_ENDPOINTS } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 interface BusinessStatsProps {
   className?: string;
@@ -33,13 +34,11 @@ const BusinessStats = ({ className = "" }: BusinessStatsProps) => {
     try {
       setLoading(true);
       
-      // Fetch all businesses for statistics
-      const response = await fetch(API_ENDPOINTS.classifiedsSearch);
-      if (!response.ok) {
-        throw new Error('Failed to fetch stats');
-      }
-      
-      const businesses = await response.json();
+      // Fetch all businesses for statistics (use all listings endpoint, not search which only returns approved)
+      const businesses = await api.get<any[]>(API_ENDPOINTS.classifieds, {
+        timeout: 15000,
+        retries: 2
+      });
       
       // Calculate statistics
       const totalBusinesses = businesses.length;
@@ -61,7 +60,11 @@ const BusinessStats = ({ className = "" }: BusinessStatsProps) => {
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
-      showToast('Failed to load business statistics', 'error');
+      if (error instanceof ApiError) {
+        showToast(error.userMessage || 'Failed to load business statistics', 'error');
+      } else {
+        showToast('Failed to load business statistics', 'error');
+      }
     } finally {
       setLoading(false);
     }

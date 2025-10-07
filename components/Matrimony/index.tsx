@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 import SectionHeader from "@/components/Common/SectionHeader";
 import CreateProfile from "./CreateProfile";
-import axios from "axios";
 import { useToast } from "@/app/context/ToastContext";
 import { API_ENDPOINTS, getImageUrl as getFullImageUrl } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 // Profile type that matches the backend data structure
 interface Profile {
@@ -125,14 +125,18 @@ const Matrimony = () => {
   const fetchProfiles = async () => {
     try {
       setLoading(true);
-      const res = await axios.get<Profile[]>(API_ENDPOINTS.candidates);
-      const profiles = Array.isArray(res.data) ? res.data : [];
-      console.log("Fetched profiles:", profiles);
-      setOriginalProfiles(profiles);
-      setFilteredProfiles(profiles);
+      const profiles = await api.get<Profile[]>(API_ENDPOINTS.candidates);
+      const profileArray = Array.isArray(profiles) ? profiles : [];
+      console.log("Fetched profiles:", profileArray);
+      setOriginalProfiles(profileArray);
+      setFilteredProfiles(profileArray);
     } catch (error) {
       console.error("Error fetching profiles:", error);
-      showToast("Failed to load profiles. Please try again later.", "error");
+      if (error instanceof ApiError) {
+        showToast(error.userMessage || "Failed to load profiles. Please try again later.", "error");
+      } else {
+        showToast("Failed to load profiles. Please try again later.", "error");
+      }
       setOriginalProfiles([]);
       setFilteredProfiles([]);
     } finally {
@@ -217,7 +221,7 @@ const Matrimony = () => {
         showToast("Please enter your name and email", "warning");
         return;
       }
-      await axios.post(API_ENDPOINTS.candidateConnect(connectProfile.id.toString()), {
+      await api.post(API_ENDPOINTS.candidateConnect(connectProfile.id.toString()), {
         senderName:senderName,
         senderEmail:senderEmail,
         message: connectMessage,
@@ -591,7 +595,7 @@ const Matrimony = () => {
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-3">Basic Information</h4>
                   <div className="space-y-2 text-sm">
-                    <div><span className="font-medium">Date of Birth:</span> {new Date(selectedProfile.dob).toLocaleDateString()}</div>
+                    <div suppressHydrationWarning><span className="font-medium">Date of Birth:</span> {new Date(selectedProfile.dob).toLocaleDateString('en-US', { timeZone: 'UTC' })}</div>
                     <div><span className="font-medium">Birth Place:</span> {selectedProfile.birth_place}</div>
                     <div><span className="font-medium">Height:</span> {selectedProfile.height}"</div>
                     <div><span className="font-medium">Body Type:</span> {selectedProfile.body_type}</div>

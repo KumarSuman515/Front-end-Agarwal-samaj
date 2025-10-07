@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import axios from "axios";
 import { API_ENDPOINTS } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 interface ClassifiedItem {
   id: number;
@@ -44,11 +44,11 @@ const ClassifiedPreview = () => {
         setLoading(true);
         setError(null);
         
-        const response = await axios.get(API_ENDPOINTS.classifieds);
+        const data = await api.get<ClassifiedItem[]>(API_ENDPOINTS.classifieds);
         
-        if (response.data && response.data.length > 0) {
+        if (data && data.length > 0) {
           // Filter only approved classifieds
-          const approvedClassifieds = response.data.filter((item: ClassifiedItem) => 
+          const approvedClassifieds = data.filter((item: ClassifiedItem) => 
             item.status === 'approved'
           );
           
@@ -118,7 +118,11 @@ const ClassifiedPreview = () => {
         }
       } catch (err) {
         console.error('Error fetching classifieds:', err);
-        setError('Failed to load classifieds');
+        if (err instanceof ApiError) {
+          setError(err.userMessage || 'Failed to load classifieds');
+        } else {
+          setError('Failed to load classifieds');
+        }
         
         // Fallback to sample data
         setFeaturedClassifieds([

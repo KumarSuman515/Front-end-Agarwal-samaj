@@ -68,11 +68,12 @@ const RelatedPost: React.FC<RelatedPostProps> = ({ currentPost, allPosts = [], l
                   </Link>
                 </h5>
                 {post.publishedAt && (
-                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400" suppressHydrationWarning>
                     {new Date(post.publishedAt).toLocaleDateString('en-US', { 
                       year: 'numeric', 
                       month: 'short', 
-                      day: 'numeric' 
+                      day: 'numeric',
+                      timeZone: 'UTC'
                     })}
                   </p>
                 )}

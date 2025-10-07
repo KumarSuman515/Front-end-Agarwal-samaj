@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import { useToast } from "@/app/context/ToastContext";
 import { API_ENDPOINTS } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 interface CreateClassifiedModalProps {
   onClose: () => void;
@@ -324,34 +325,28 @@ const CreateClassifiedModal = ({ onClose, onSuccess }: CreateClassifiedModalProp
         formDataToSend.append('photos', photo);
       });
 
-      const response = await fetch(API_ENDPOINTS.classifiedsRegister, {
-        method: "POST",
-        body: formDataToSend,
+      const result = await api.post(API_ENDPOINTS.classifiedsRegister, formDataToSend, {
+        timeout: 30000, // 30 seconds for file upload
+        retries: 1 // Only retry once for form submission
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to register business");
-      }
-
-      const result = await response.json();
-      showToast("Business registered successfully! Your listing is under review.", "success");
+      showToast("व्यवसाय सफलतापूर्वक पंजीकृत हो गया! आपकी लिस्टिंग समीक्षा के अधीन है। / Business registered successfully! Your listing is under review.", "success");
       onSuccess();
       onClose();
     } catch (error) {
       console.error("Error registering business:", error);
       
-      // Handle specific error messages with user-friendly text
-      let errorMessage = "Failed to register business";
-      if (error instanceof Error) {
+      if (error instanceof ApiError) {
+        // Handle specific server errors
         if (error.message.includes("Email or Phone already registered")) {
-          errorMessage = "This email or phone number is already registered. Please use different contact details or contact support if you need to register multiple businesses.";
+          showToast("यह ईमेल या फोन नंबर पहले से पंजीकृत है। कृपया अलग संपर्क विवरण का उपयोग करें। / This email or phone number is already registered. Please use different contact details.", "error");
         } else {
-          errorMessage = error.message;
+          // Use user-friendly error message from ApiError
+          showToast(error.userMessage || error.message, "error");
         }
+      } else {
+        showToast("व्यवसाय पंजीकृत करने में विफल / Failed to register business", "error");
       }
-      
-      showToast(errorMessage, "error");
     } finally {
       setLoading(false);
     }

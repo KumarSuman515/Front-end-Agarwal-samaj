@@ -6,6 +6,7 @@ import Link from "next/link";
 import { GalleryAlbum, GalleryImage } from "@/types/gallery";
 import ImageModal from "@/components/Gallery/ImageModal";
 import { API_ENDPOINTS, getImageUrl as getFullImageUrl } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 interface AlbumDetailProps {
   albumId: number;
@@ -25,21 +26,9 @@ const AlbumDetail = ({ albumId }: AlbumDetailProps) => {
       try {
         setLoading(true);
         setError(null);
-        const [albumResponse, imagesResponse] = await Promise.all([
-          fetch(API_ENDPOINTS.albumDetail(String(albumId))),
-          fetch(API_ENDPOINTS.albumImages(String(albumId)))
-        ]);
-        
-        if (!albumResponse.ok) {
-          throw new Error(`Failed to fetch album: ${albumResponse.status}`);
-        }
-        if (!imagesResponse.ok) {
-          throw new Error(`Failed to fetch album images: ${imagesResponse.status}`);
-        }
-        
         const [albumData, imagesData] = await Promise.all([
-          albumResponse.json(),
-          imagesResponse.json()
+          api.get<GalleryAlbum>(API_ENDPOINTS.albumDetail(String(albumId)), { timeout: 15000 }),
+          api.get<GalleryImage[]>(API_ENDPOINTS.albumImages(String(albumId)), { timeout: 15000 })
         ]);
         
         console.log('Album Data:', albumData);
@@ -50,7 +39,11 @@ const AlbumDetail = ({ albumId }: AlbumDetailProps) => {
         setImages(imagesData);
       } catch (err) {
         console.error('Error fetching album data:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch album data');
+        if (err instanceof ApiError) {
+          setError(err.userMessage || err.message);
+        } else {
+          setError('Failed to fetch album data. Please try again later.');
+        }
       } finally {
         setLoading(false);
       }
@@ -89,6 +82,7 @@ const AlbumDetail = ({ albumId }: AlbumDetailProps) => {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
+      timeZone: 'UTC',
       year: 'numeric',
       month: 'long',
       day: 'numeric'

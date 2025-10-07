@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import axios from "axios";
 import { API_ENDPOINTS, getImageUrl } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 interface GalleryAlbum {
   album_id: number;
@@ -28,19 +28,19 @@ const GalleryPreview = () => {
         setLoading(true);
         setError(null);
         
-        const response = await axios.get(API_ENDPOINTS.albums);
-        console.log("Gallery API Response:", response.data);
+        const data = await api.get<any>(API_ENDPOINTS.albums);
+        console.log("Gallery API Response:", data);
         
         // Handle different response structures
         let albumData: GalleryAlbum[] = [];
-        if (Array.isArray(response.data)) {
-          albumData = response.data;
-        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
-          albumData = response.data.data;
-        } else if (response.data && response.data.albums && Array.isArray(response.data.albums)) {
-          albumData = response.data.albums;
-        } else if (response.data && response.data.results && Array.isArray(response.data.results)) {
-          albumData = response.data.results;
+        if (Array.isArray(data)) {
+          albumData = data;
+        } else if (data && data.data && Array.isArray(data.data)) {  
+          albumData = data.data;
+        } else if (data && data.albums && Array.isArray(data.albums)) {
+          albumData = data.albums;
+        } else if (data && data.results && Array.isArray(data.results)) {
+          albumData = data.results;
         }
         
         console.log("Processed album data:", albumData);
@@ -81,7 +81,11 @@ const GalleryPreview = () => {
         }
       } catch (err) {
         console.error('Error fetching gallery albums:', err);
-        setError('Failed to load gallery albums');
+        if (err instanceof ApiError) {
+          setError(err.userMessage || 'Failed to load gallery albums');
+        } else {
+          setError('Failed to load gallery albums');
+        }
         
          // Fallback to sample data
          setFeaturedImages([
@@ -235,8 +239,8 @@ const GalleryPreview = () => {
                           <h3 className="text-white text-xl font-bold mb-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                             {album.album_title}
                           </h3>
-                          <p className="text-white/90 text-sm mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">
-                            {new Date(album.event_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                          <p className="text-white/90 text-sm mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100" suppressHydrationWarning>
+                            {new Date(album.event_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}
                           </p>
                           <span className="inline-block bg-gradient-to-r from-primary to-meta text-white text-sm px-4 py-2 rounded-full font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-200">
                             Gallery
@@ -265,7 +269,7 @@ const GalleryPreview = () => {
                       
                       {/* Tags and Date */}
                       <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                        <span>{new Date(album.event_date).toLocaleDateString('en-IN', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                        <span suppressHydrationWarning>{new Date(album.event_date).toLocaleDateString('en-IN', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</span>
                         <span className="flex items-center">
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />

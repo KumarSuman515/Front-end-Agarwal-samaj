@@ -1,8 +1,8 @@
 "use client";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { API_ENDPOINTS, getImageUrl } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 interface SliderImage {
   id: number;
@@ -18,27 +18,33 @@ const Hero = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+
   // Fetch slider images from API
   useEffect(() => {
     const fetchSliders = async () => {
       try {
-        console.log("Fetching sliders from API...");
+        console.log("🚀 Fetching sliders from API...");
+        console.log("📍 API Endpoint:", API_ENDPOINTS.sliders);
+        
         setLoading(true);
         setError(null);
               
-        const response = await axios.get(API_ENDPOINTS.sliders);
-        console.log("API Response:", response.data);
+        const data = await api.get<SliderImage[]>(API_ENDPOINTS.sliders);
         
-        const data = response.data;
+        console.log("✅ API Response:", data);
+        console.log("📊 Data type:", typeof data);
+        console.log("📏 Data length:", data?.length || 0);
         
-        if (data && data.length > 0) {
+        if (data && Array.isArray(data) && data.length > 0) {
+          console.log("📋 Slider data:", data);
           setSliderImages(data);
         } else {
+          console.log("⚠️ No slider images found");
           setSliderImages([]);
           setError("No slider images available");
         }
       } catch (err) {
-        console.error("API Error:", err.message);
+        console.error("❌ API Error:", err);
         setError(`Failed to load slider images: ${err.message}`);
         setSliderImages([]);
       } finally {
@@ -58,6 +64,7 @@ const Hero = () => {
     }, 4000);
     return () => clearInterval(interval);
   }, [sliderImages.length]);
+
 
   // Show loading state
   if (loading) {
@@ -164,6 +171,7 @@ const Hero = () => {
                 </div>
               </div>
             ))}
+
 
             {/* Error message */}
             {error && (

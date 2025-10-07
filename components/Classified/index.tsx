@@ -28,6 +28,7 @@ interface ClassifiedItem {
 
 // API Base URL
 import { API_ENDPOINTS, getImageUrl } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 const API_BASE_URL = API_ENDPOINTS.classifieds;
 
@@ -70,15 +71,18 @@ const Classified = () => {
       const queryString = params.toString();
       const url = queryString ? `${API_BASE_URL}/search?${queryString}` : `${API_BASE_URL}/search`;
       
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Failed to fetch classifieds');
-      }
-      const data = await response.json();
+      const data = await api.get<ClassifiedItem[]>(url, {
+        timeout: 15000,
+        retries: 2
+      });
       setClassifieds(data);
     } catch (error) {
       console.error('Error fetching classifieds:', error);
-      showToast('Failed to load classifieds', 'error');
+      if (error instanceof ApiError) {
+        showToast(error.userMessage || 'Failed to load classifieds', 'error');
+      } else {
+        showToast('Failed to load classifieds', 'error');
+      }
       setClassifieds([]);
     } finally {
       setLoading(false);
@@ -179,6 +183,7 @@ const Classified = () => {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-IN', {
+      timeZone: 'UTC',
       year: 'numeric',
       month: 'short',
       day: 'numeric'

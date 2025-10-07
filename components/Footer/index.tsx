@@ -202,17 +202,19 @@ const Footer = () => {
                     Subscribe to receive future updates
                   </p>
 
-                  <form action="#">
-                    <div className="relative">
+                  <form action="#" suppressHydrationWarning>
+                    <div className="relative" suppressHydrationWarning>
                       <input
                         type="text"
                         placeholder="Email address"
                         className="w-full rounded-full border border-stroke px-4 sm:px-6 py-2 sm:py-3 shadow-solid-11 focus:border-primary focus:outline-hidden dark:border-strokedark dark:bg-black dark:shadow-none dark:focus:border-primary text-sm sm:text-base"
+                        suppressHydrationWarning
                       />
 
                       <button
                         aria-label="signup to newsletter"
                         className="absolute right-0 p-2 sm:p-3 md:p-4"
+                        suppressHydrationWarning
                       >
                         <svg
                           className="fill-[#757693] hover:fill-primary dark:fill-white"

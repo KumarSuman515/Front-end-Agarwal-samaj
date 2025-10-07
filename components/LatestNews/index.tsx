@@ -1,8 +1,10 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Blog } from "@/types/blog";
 import { API_ENDPOINTS, getImageUrl } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 // Transform API data to match frontend Blog type
 const transformBlogPost = (apiPost: any) => {
@@ -37,55 +39,66 @@ const transformBlogPost = (apiPost: any) => {
   };
 };
 
-const LatestNews = async () => {
-  let newsPosts: Blog[] = [];
-  let blogPosts: Blog[] = [];
-  let error: string | null = null;
+const LatestNews = () => {
+  const [newsPosts, setNewsPosts] = useState<Blog[]>([]);
+  const [blogPosts, setBlogPosts] = useState<Blog[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  try {
-    // Fetch blog posts from API
-    const blogResponse = await fetch(API_ENDPOINTS.blogs, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-    });
-
-    if (!blogResponse.ok) {
-      throw new Error(`HTTP error! status: ${blogResponse.status}`);
-    }
-
-    const blogApiPosts = await blogResponse.json();
-    
-    // Transform all posts and use them as news (since we don't have separate news endpoint)
-    const allPosts = blogApiPosts.map(transformBlogPost);
-    
-    // Use the latest posts as news
-    newsPosts = allPosts.slice(0, 4);
-    blogPosts = allPosts.slice(4, 8); // Additional posts for variety
-    
-  } catch (err) {
-    console.error('Error fetching posts:', err);
-    error = 'Failed to load latest news and blogs';
-    
-    // Fallback to some sample data if API fails
-    const fallbackData = [
-      {
-        post_id: 'fallback1',
-        title: 'Welcome to Agarwal Samaj',
-        excerpt: 'Join our vibrant community and be part of something special. Connect with fellow community members.',
-        content: 'Welcome to our community platform...',
-        thumbnail_url: '/images/blog/blog-01.png',
-        author_name: 'Community Admin',
-        Category: { category_name: 'Community' },
-        publish_date: new Date().toISOString()
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Fetch slider data from API using new API client
+        console.log("Fetching slider data from API...");
+        const sliderData = await api.get(API_ENDPOINTS.sliders);
+        console.log("Slider API Response:", sliderData);
+        
+        // Fetch blog posts from API
+        console.log("Fetching blog posts from API...");
+        const blogApiPosts = await api.get(API_ENDPOINTS.blogs);
+        console.log("Blog API Response:", blogApiPosts);
+        
+        // Transform all posts and use them as news (since we don't have separate news endpoint)
+        const allPosts = blogApiPosts.map(transformBlogPost);
+        
+        // Use the latest posts as news
+        setNewsPosts(allPosts.slice(0, 4));
+        setBlogPosts(allPosts.slice(4, 8)); // Additional posts for variety
+        
+      } catch (err) {
+        console.error('Error fetching posts:', err);
+        if (err instanceof ApiError) {
+          setError(err.userMessage || 'Failed to load latest news and blogs');
+        } else {
+          setError('Failed to load latest news and blogs');
+        }
+        
+        // Fallback to some sample data if API fails
+        const fallbackData = [
+          {
+            post_id: 'fallback1',
+            title: 'Welcome to Agarwal Samaj',
+            excerpt: 'Join our vibrant community and be part of something special. Connect with fellow community members.',
+            content: 'Welcome to our community platform...',
+            thumbnail_url: '/images/blog/blog-01.png',
+            author_name: 'Community Admin',
+            Category: { category_name: 'Community' },
+            publish_date: new Date().toISOString()
+          }
+        ];
+        
+        setNewsPosts(fallbackData.map(transformBlogPost));
+        setBlogPosts([]);
+      } finally {
+        setLoading(false);
       }
-    ];
-    
-    newsPosts = fallbackData.map(transformBlogPost);
-    blogPosts = [];
-  }
+    };
+
+    fetchPosts();
+  }, []);
 
   return (
     <section id="latest-news" className="px-3 sm:px-4 md:px-6 lg:px-8 2xl:px-0 min-h-[60vh] sm:min-h-[70vh] lg:min-h-[80vh]">
@@ -97,7 +110,14 @@ const LatestNews = async () => {
               Community News & Updates
             </h1>
             
-            {error ? (
+            {loading ? (
+              <div className="flex-1 w-full overflow-hidden rounded-lg bg-black shadow-xl flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                  <p className="text-gray-300 text-sm">Loading news...</p>
+                </div>
+              </div>
+            ) : error ? (
               <div className="flex-1 w-full overflow-hidden rounded-lg bg-black shadow-xl flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-red-500 mb-2">
@@ -152,7 +172,7 @@ const LatestNews = async () => {
                           <span className="bg-primary/20 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs">
                             {newsPosts[0].category}
                           </span>
-                          <span className="text-xs">{new Date(newsPosts[0].publishedAt || '').toLocaleDateString('en-US')}</span>
+                          <span className="text-xs" suppressHydrationWarning>{new Date(newsPosts[0].publishedAt || '').toLocaleDateString('en-US', { timeZone: 'UTC' })}</span>
                         </div>
                       </div>
                     </div>
@@ -220,7 +240,7 @@ const LatestNews = async () => {
                         <span>•</span>
                         <span className="text-xs">{post.category}</span>
                         <span>•</span>
-                        <span className="text-xs">{new Date(post.publishedAt || '').toLocaleDateString('en-US')}</span>
+                        <span className="text-xs" suppressHydrationWarning>{new Date(post.publishedAt || '').toLocaleDateString('en-US', { timeZone: 'UTC' })}</span>
                       </div>
                     </div>
                   </li>

@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
-import axios from "axios";
 import { API_ENDPOINTS } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 // import ToastProvider from "@/app/context/ToastContext";
 
 type CreateProfileProps = {
@@ -585,14 +585,14 @@ const CreateProfile = ({ onClose, onSave }: CreateProfileProps) => {
       console.log("Sending request to:", API_ENDPOINTS.candidates);
       console.log("Form data being sent:", Object.fromEntries(multipart.entries()));
       
-      const response = await axios.post(API_ENDPOINTS.candidates, multipart, {
+      const response = await api.post(API_ENDPOINTS.candidates, multipart, {
          timeout: 30000, // 30 second timeout
        });
       
       console.log("Response received:", response);
-      const created = await response?.data ?? null;
+      const created = response;
 
-      if (!response || response.status < 200 || response.status >= 300 || !created) {
+      if (!created) {
         showToastNotification("Profile save failed: Check server logs.", "error");
         return;
       }

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { GalleryAlbum } from "@/types/gallery";
 import { API_ENDPOINTS, getImageUrl as getFullImageUrl } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 const AlbumList = () => {
   const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
@@ -16,15 +17,17 @@ const AlbumList = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(API_ENDPOINTS.albums);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch albums: ${response.status}`);
-        }
-        const data = await response.json();
+        const data = await api.get<GalleryAlbum[]>(API_ENDPOINTS.albums, {
+          timeout: 15000
+        });
         setAlbums(data);
       } catch (err) {
         console.error('Error fetching albums:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch albums');
+        if (err instanceof ApiError) {
+          setError(err.userMessage || err.message);
+        } else {
+          setError('Failed to fetch albums. Please try again later.');
+        }
       } finally {
         setLoading(false);
       }
@@ -35,6 +38,7 @@ const AlbumList = () => {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
+      timeZone: 'UTC',
       year: 'numeric',
       month: 'long',
       day: 'numeric'

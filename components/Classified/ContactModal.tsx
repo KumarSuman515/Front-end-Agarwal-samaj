@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useToast } from "@/app/context/ToastContext";
 import { API_ENDPOINTS } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 interface ClassifiedItem {
   id: number;
@@ -42,15 +43,17 @@ const ContactModal = ({ classified, onClose }: ContactModalProps) => {
   const fetchBusinessDetails = async (id: number) => {
     try {
       setLoading(true);
-      const response = await fetch(API_ENDPOINTS.classifiedDetail(String(id)));
-      if (!response.ok) {
-        throw new Error('Failed to fetch business details');
-      }
-      const data = await response.json();
+      const data = await api.get(API_ENDPOINTS.classifiedDetail(String(id)), {
+        timeout: 10000
+      });
       setBusinessDetails(data);
     } catch (error) {
       console.error('Error fetching business details:', error);
-      showToast('Failed to load business details', 'error');
+      if (error instanceof ApiError) {
+        showToast(error.userMessage || 'Failed to load business details', 'error');
+      } else {
+        showToast('Failed to load business details', 'error');
+      }
     } finally {
       setLoading(false);
     }
@@ -265,7 +268,8 @@ const ContactModal = ({ classified, onClose }: ContactModalProps) => {
           <div className="mt-6 pt-4 border-t border-gray-200">
             <div className="text-center text-sm text-gray-500">
               <p>Contact the business owner directly for more information</p>
-              <p className="mt-1">Posted on {new Date(businessDetails.created_at).toLocaleDateString('en-IN', {
+              <p className="mt-1" suppressHydrationWarning>Posted on {new Date(businessDetails.created_at).toLocaleDateString('en-IN', {
+                timeZone: 'UTC',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'

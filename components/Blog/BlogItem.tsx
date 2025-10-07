@@ -53,14 +53,15 @@ const BlogItem = ({ blog }: { blog: Blog }) => {
         <div className="p-6">
           {/* Date */}
           {publishedAt && (
-            <div className="mb-3 flex items-center text-sm text-gray-500">
+            <div className="mb-3 flex items-center text-sm text-gray-500" suppressHydrationWarning>
               <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               {new Date(publishedAt).toLocaleDateString('en-US', { 
                 year: 'numeric', 
                 month: 'long', 
-                day: 'numeric' 
+                day: 'numeric',
+                timeZone: 'UTC'
               })}
             </div>
           )}

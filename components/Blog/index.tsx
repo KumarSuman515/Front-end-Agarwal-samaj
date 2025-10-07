@@ -43,19 +43,9 @@ const Blog = async () => {
   let error: string | null = null;
 
   try {
-    const response = await fetch(API_ENDPOINTS.blogs, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store', // Ensure fresh data
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const apiPosts = await response.json();
+    // Using the new API client instead of fetch
+    const { default: api } = await import('@/lib/api/client');
+    const apiPosts = await api.get(API_ENDPOINTS.blogs);
     blogPosts = apiPosts.map(transformBlogPost);
   } catch (err) {
     console.error('Error fetching blog posts:', err);

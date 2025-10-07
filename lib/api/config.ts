@@ -1,40 +1,42 @@
-// API Configuration
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4005';
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4005/api';
-export const UPLOADS_URL = process.env.NEXT_PUBLIC_UPLOADS_URL || 'http://localhost:4005/uploads';
+// API Configuration - following admin panel pattern
+import { getBackendUrl, getImageUrl as getImageUrlFromEnv } from '../utils/env';
+
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || getBackendUrl();
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || `${getBackendUrl()}/api`;
+export const UPLOADS_URL = process.env.NEXT_PUBLIC_UPLOADS_URL || `${getBackendUrl()}/uploads`;
 
 // API Endpoints
 export const API_ENDPOINTS = {
   // Sliders
-  sliders: `${API_BASE_URL}/sliders`,
+  sliders: `/sliders`,
   
   // Gallery
-  albums: `${API_BASE_URL}/albums`,
-  albumImages: (albumId: string) => `${API_BASE_URL}/albums/${albumId}/images`,
-  albumDetail: (albumId: string) => `${API_BASE_URL}/albums/${albumId}`,
+  albums: `/albums`,
+  albumImages: (albumId: string) => `/albums/${albumId}/images`,
+  albumDetail: (albumId: string) => `/albums/${albumId}`,
   
   // Blog
-  blogs: `${API_BASE_URL}/blogs`,
-  blogCategories: `${API_BASE_URL}/blogs/categories`,
+  blogs: `/blogs`,
+  blogCategories: `/blogs/categories`,
   
   // Membership
-  membership: `${API_BASE_URL}/membership`,
+  membership: `/membership`,
   
   // Classifieds
-  classifieds: `${API_BASE_URL}/classifieds`,
-  classifiedsRegister: `${API_BASE_URL}/classifieds/register`,
-  classifiedsSearch: `${API_BASE_URL}/classifieds/search`,
-  classifiedStatus: (contact: string) => `${API_BASE_URL}/classifieds/status/${encodeURIComponent(contact)}`,
-  classifiedDetail: (id: string) => `${API_BASE_URL}/classifieds/${id}`,
-  classifiedUpdateStatus: (id: string) => `${API_BASE_URL}/classifieds/${id}/status`,
-  classifiedUpdateFeatured: (id: string) => `${API_BASE_URL}/classifieds/${id}/featured`,
+  classifieds: `/classifieds`,
+  classifiedsRegister: `/classifieds/register`,
+  classifiedsSearch: `/classifieds/search`,
+  classifiedStatus: (contact: string) => `/classifieds/status/${encodeURIComponent(contact)}`,
+  classifiedDetail: (id: string) => `/classifieds/${id}`,
+  classifiedUpdateStatus: (id: string) => `/classifieds/${id}/status`,
+  classifiedUpdateFeatured: (id: string) => `/classifieds/${id}/featured`,
   
   // Matrimony
-  candidates: `${API_BASE_URL}/candidates`,
-  candidateConnect: (id: string) => `${API_BASE_URL}/candidates/${id}/connect`,
+  candidates: `/candidates`,
+  candidateConnect: (id: string) => `/candidates/${id}/connect`,
 };
 
-// Helper function to get full image URL
+// Helper function to get full image URL - following admin panel pattern
 export const getImageUrl = (imagePath: string): string => {
   if (!imagePath) return '';
   
@@ -43,19 +45,13 @@ export const getImageUrl = (imagePath: string): string => {
     return imagePath;
   }
   
-  // If path starts with /, use API_URL
-  if (imagePath.startsWith('/')) {
-    return `${API_URL}${imagePath}`;
-  }
-  
-  // If path starts with 'uploads/', use API_URL
-  if (imagePath.startsWith('uploads/')) {
-    return `${API_URL}/${imagePath}`;
-  }
-  
-  // Otherwise, assume it's in uploads directory
-  return `${UPLOADS_URL}/${imagePath}`;
+  // Use the same pattern as admin panel
+  return getImageUrlFromEnv(imagePath);
 };
 
 export default API_ENDPOINTS;
+
+
+
+
 

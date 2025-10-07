@@ -57,33 +57,13 @@ const BlogContent = () => {
         setLoading(true);
         setError(null);
         
-        const [postsResponse, categoriesResponse] = await Promise.all([
-          fetch(API_ENDPOINTS.blogs, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            cache: 'no-store',
-          }),
-          fetch(API_ENDPOINTS.blogCategories, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            cache: 'no-store',
-          })
-        ]);
+        // Import API client
+        const { default: api } = await import('@/lib/api/client');
         
-        if (!postsResponse.ok) {
-          throw new Error(`Failed to fetch blog posts: ${postsResponse.status}`);
-        }
-        if (!categoriesResponse.ok) {
-          throw new Error(`Failed to fetch categories: ${categoriesResponse.status}`);
-        }
-        
+        // Use API client instead of fetch for proper URL handling
         const [postsData, categoriesData] = await Promise.all([
-          postsResponse.json(),
-          categoriesResponse.json()
+          api.get(API_ENDPOINTS.blogs),
+          api.get(API_ENDPOINTS.blogCategories)
         ]);
         
         const transformedPosts = postsData.map(transformBlogPost);

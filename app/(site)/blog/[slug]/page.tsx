@@ -6,6 +6,7 @@ import RelatedPost from "@/components/Blog/RelatedPost";
 import SharePost from "@/components/Blog/SharePost";
 import { Blog } from "@/types/blog";
 import { API_ENDPOINTS, getImageUrl } from "@/lib/api/config";
+import api from "@/lib/api/client";
 
 interface BlogPageProps {
   params: Promise<{
@@ -51,19 +52,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   const resolvedParams = await params;
   
   try {
-    const response = await fetch(API_ENDPOINTS.blogs, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const apiPosts = await response.json();
+    const apiPosts = await api.get(API_ENDPOINTS.blogs);
     const blogPosts = apiPosts.map(transformBlogPost);
     const blog = blogPosts.find((post) => post.slug === resolvedParams.slug);
     
@@ -95,19 +84,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 // Generate static params for all blog posts
 export async function generateStaticParams() {
   try {
-    const response = await fetch(API_ENDPOINTS.blogs, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const apiPosts = await response.json();
+    const apiPosts = await api.get(API_ENDPOINTS.blogs);
     const blogPosts = apiPosts.map(transformBlogPost);
     return blogPosts.map((post) => ({
       slug: post.slug,
@@ -122,19 +99,7 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
   const resolvedParams = await params;
   
   try {
-    const response = await fetch(API_ENDPOINTS.blogs, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store',
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const apiPosts = await response.json();
+    const apiPosts = await api.get(API_ENDPOINTS.blogs);
     const blogPosts = apiPosts.map(transformBlogPost);
     const blog = blogPosts.find((post) => post.slug === resolvedParams.slug);
 
@@ -145,15 +110,18 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
     // Format the body content with proper line breaks
     const formatBodyContent = (body: string) => {
     return body.split('\n').map((line, index) => {
+      // Create a stable key using both index and a hash of the content
+      const stableKey = `line-${index}-${line.substring(0, 20).replace(/\s/g, '-')}`;
+      
       if (line.trim() === '') {
-        return <br key={index} />;
+        return <br key={stableKey} />;
       }
       
       // Handle bold text (markdown-style **text**)
       if (line.startsWith('**') && line.endsWith('**')) {
         const text = line.slice(2, -2);
         return (
-          <h3 key={index} className="pt-6 pb-2 text-xl font-semibold text-black dark:text-white">
+          <h3 key={stableKey} className="pt-6 pb-2 text-xl font-semibold text-black dark:text-white">
             {text}
           </h3>
         );
@@ -164,7 +132,7 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
         const text = line.slice(4);
         const [boldPart, ...rest] = text.split('**');
         return (
-          <li key={index} className="mb-2 flex items-start">
+          <li key={stableKey} className="mb-2 flex items-start">
             <span className="mr-2 mt-1 h-1.5 w-1.5 rounded-full bg-primary"></span>
             <span>
               <strong>{boldPart}</strong>
@@ -176,7 +144,7 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
       
       if (line.startsWith('- ')) {
         return (
-          <li key={index} className="mb-2 flex items-start">
+          <li key={stableKey} className="mb-2 flex items-start">
             <span className="mr-2 mt-1 h-1.5 w-1.5 rounded-full bg-primary"></span>
             <span>{line.slice(2)}</span>
           </li>
@@ -186,7 +154,7 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
       // Handle numbered lists
       if (/^\d+\.\s/.test(line)) {
         return (
-          <li key={index} className="mb-2">
+          <li key={stableKey} className="mb-2">
             {line}
           </li>
         );
@@ -194,7 +162,7 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
       
       // Regular paragraphs
       return (
-        <p key={index} className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+        <p key={stableKey} className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
           {line}
         </p>
       );
@@ -215,16 +183,18 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
             <div className="md:w-1/2 lg:w-[32%]">
               {/* Search */}
               <div className="animate_top mb-10 rounded-md border border-stroke bg-white p-3.5 shadow-solid-13 dark:border-strokedark dark:bg-blacksection">
-                <form>
-                  <div className="relative">
+                <form suppressHydrationWarning>
+                  <div className="relative" suppressHydrationWarning>
                     <input
                       type="text"
                       placeholder="Search Here..."
                       className="w-full rounded-lg border border-stroke px-6 py-4 shadow-solid-12 focus:border-primary focus:outline-hidden dark:border-strokedark dark:bg-black dark:shadow-none dark:focus:border-primary"
+                      suppressHydrationWarning
                     />
                     <button
                       className="absolute right-0 top-0 p-5"
                       aria-label="search-icon"
+                      suppressHydrationWarning
                     >
                       <svg
                         className="fill-black transition-all duration-300 hover:fill-primary dark:fill-white dark:hover:fill-primary"
@@ -291,11 +261,12 @@ const BlogPostPage = async ({ params }: BlogPageProps) => {
                   )}
                   {blog.publishedAt && (
                     <li>
-                      <span className="text-black dark:text-white">
+                      <span className="text-black dark:text-white" suppressHydrationWarning>
                         Published On: {new Date(blog.publishedAt).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
-                          day: 'numeric'
+                          day: 'numeric',
+                          timeZone: 'UTC'
                         })}
                       </span>
                     </li>

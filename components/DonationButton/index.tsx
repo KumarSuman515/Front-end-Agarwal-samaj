@@ -32,6 +32,7 @@ export default function DonationButton() {
           onClick={() => setIsModalOpen(true)}
           className="group relative flex items-center gap-2 h-14 px-5 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
           aria-label="Donate to Agarwal Samaj"
+          suppressHydrationWarning
         >
           <Heart className="h-6 w-6 fill-current" />
           <span className="font-semibold">Donate</span>
@@ -75,7 +76,7 @@ export default function DonationButton() {
 
             {/* Form Content */}
             <div className="p-4">
-              <form onSubmit={handleDonation} className="space-y-3">
+              <form onSubmit={handleDonation} className="space-y-3" suppressHydrationWarning>
                 {/* Predefined Amounts */}
                 <div>
                   <label className="mb-2 block text-xs font-medium text-gray-700 dark:text-gray-300">
@@ -92,6 +93,7 @@ export default function DonationButton() {
                             ? "border-red-500 bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400"
                             : "border-gray-300 text-gray-700 hover:border-red-300 hover:bg-red-50 dark:border-gray-600 dark:text-gray-300 dark:hover:border-red-400"
                         }`}
+                        suppressHydrationWarning
                       >
                         ₹{amount}
                       </button>
@@ -110,6 +112,7 @@ export default function DonationButton() {
                     onChange={(e) => setDonationAmount(e.target.value)}
                     placeholder="Enter amount"
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    suppressHydrationWarning
                   />
                 </div>
 
@@ -125,6 +128,7 @@ export default function DonationButton() {
                     placeholder="Enter your name"
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     required
+                    suppressHydrationWarning
                   />
                 </div>
 
@@ -140,6 +144,7 @@ export default function DonationButton() {
                     placeholder="Enter your email"
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     required
+                    suppressHydrationWarning
                   />
                 </div>
 
@@ -148,6 +153,7 @@ export default function DonationButton() {
                   type="submit"
                   disabled={!donationAmount || !donorName || !donorEmail}
                   className="w-full rounded-lg bg-gradient-to-r from-red-500 to-pink-500 py-2.5 font-semibold text-white text-sm transition-all duration-300 hover:from-red-600 hover:to-pink-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  suppressHydrationWarning
                 >
                   Donate ₹{donationAmount || "0"}
                 </button>

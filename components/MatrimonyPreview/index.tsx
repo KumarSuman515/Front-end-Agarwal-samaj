@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import axios from "axios";
 import { API_ENDPOINTS, getImageUrl as getFullImageUrl } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 interface Profile {
   id: number;
@@ -48,11 +48,14 @@ const MatrimonyPreview = () => {
     const fetchProfiles = async () => {
       try {
         setLoading(true);
-        const res = await axios.get<Profile[]>(API_ENDPOINTS.candidates);
-        const profiles = Array.isArray(res.data) ? res.data.slice(0, 3) : [];
+        const data = await api.get<Profile[]>(API_ENDPOINTS.candidates);
+        const profiles = Array.isArray(data) ? data.slice(0, 3) : [];
         setFeaturedProfiles(profiles);
       } catch (error) {
         console.error("Error fetching featured profiles:", error);
+        if (error instanceof ApiError) {
+          console.error("API Error:", error.userMessage || error.message);
+        }
         // Fallback to static data if API fails
         setFeaturedProfiles([
           {

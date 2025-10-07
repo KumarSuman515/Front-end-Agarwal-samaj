@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import { useToast } from "@/app/context/ToastContext";
 import { API_ENDPOINTS } from "@/lib/api/config";
+import api, { ApiError } from "@/lib/api/client";
 
 interface StatusCheckModalProps {
   onClose: () => void;
@@ -26,50 +27,34 @@ const StatusCheckModal = ({ onClose }: StatusCheckModalProps) => {
     e.preventDefault();
     
     if (!contact.trim()) {
-      console.log("No data found - showing toast");
-      try {
-        showToast("No data found", "error");
-        console.log("Toast called successfully");
-        // Fallback alert for testing
-        alert("No data found");
-      } catch (error) {
-        console.error("Error showing toast:", error);
-        alert("No data found (fallback)");
-      }
+      showToast("कृपया ईमेल या फोन नंबर भरें / Please enter email or phone number", "error");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await fetch(API_ENDPOINTS.classifiedStatus(contact));
+      const data = await api.get<{ status: string; business_name?: string }>(
+        API_ENDPOINTS.classifiedStatus(contact),
+        { timeout: 10000 } // 10 second timeout
+      );
       
-      if (!response.ok) {
-        if (response.status === 404) {
-          // User is not registered - show specific message
-          console.log("Data not found - showing toast");
-          try {
-            showToast("Data not found", "error");
-            console.log("Toast called successfully");
-            // Fallback alert for testing
-            alert("Data not found");
-          } catch (error) {
-            console.error("Error showing toast:", error);
-            alert("Data not found (fallback)");
-          }
-          setLoading(false);
-          return;
-        }
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to check status");
-      }
-
-      const data = await response.json();
       setStatus(data.status);
-      setBusinessName(contact); // In real app, you might want to get business name from API
-      showToast("Status retrieved successfully", "success");
+      setBusinessName(data.business_name || contact);
+      showToast("Status retrieved successfully ✓", "success");
+      
     } catch (error) {
       console.error("Error checking status:", error);
-      showToast(error instanceof Error ? error.message : "Failed to check status", "error");
+      
+      if (error instanceof ApiError) {
+        // Use user-friendly error message from ApiError
+        showToast(error.userMessage || error.message, "error");
+      } else {
+        showToast("Failed to check status. Please try again.", "error");
+      }
+      
+      // Reset status on error
+      setStatus(null);
+      setBusinessName("");
     } finally {
       setLoading(false);
     }
