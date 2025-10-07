@@ -6,11 +6,11 @@ import Lines from "@/components/Lines";
 import ScrollToTop from "@/components/ScrollToTop";
 import { ThemeProvider } from "next-themes";
 import { Inter } from "next/font/google";
-import "../globals.css";
+import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
-import ToastProvider from "../context/ToastContext";
-import HeaderProvider from "../context/HeaderContext";
+import ToastProvider from "./context/ToastContext";
+import HeaderProvider from "./context/HeaderContext";
 import DonationButton from "@/components/DonationButton";
 
 export default function RootLayout({
@@ -43,3 +43,4 @@ export default function RootLayout({
     </html>
   );
 }
+

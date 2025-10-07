@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  output: 'export',
   reactStrictMode: true,
   env: {
     NEXT_PUBLIC_BACKEND_URL: 'https://api.abaspunjab.in',
@@ -9,6 +10,7 @@ const nextConfig = {
     NEXT_PUBLIC_UPLOADS_URL: 'https://api.abaspunjab.in/uploads',
   },
   images: {
+    unoptimized: true,
     domains: ["localhost", "images.unsplash.com", "api.abaspunjab.in"],
     remotePatterns: [
       {
@@ -31,28 +33,8 @@ const nextConfig = {
   // Performance optimizations
   compress: true,
   poweredByHeader: false,
-  // Security headers
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin',
-          },
-        ],
-      },
-    ];
-  },
+  // Note: Security headers removed as they don't work with output: 'export'
+  // Configure these in your web server (nginx/apache) instead
 };
 
 module.exports = nextConfig;

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "deploy:prepare": "node -e \"console.log('Run deploy.bat on Windows or ./deploy.sh on Linux/Mac')\"",
-    "export": "next build && next export"
+    "export": "next build"
   },
   "dependencies": {
     "autoprefixer": "^10.4.21",

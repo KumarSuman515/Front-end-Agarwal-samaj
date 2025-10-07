@@ -1,10 +1,25 @@
 import React from "react";
 import AlbumDetail from "@/components/Gallery/AlbumDetail";
+import api from "@/lib/api/client";
+import { API_ENDPOINTS } from "@/lib/api/config";
 
 interface GalleryPageProps {
   params: Promise<{
     id: string;
   }>;
+}
+
+// Generate static params for all gallery albums
+export async function generateStaticParams() {
+  try {
+    const albums = await api.get(API_ENDPOINTS.albums);
+    return albums.map((album: any) => ({
+      id: album.album_id.toString(),
+    }));
+  } catch (error) {
+    console.error('Error generating static params for gallery:', error);
+    return [];
+  }
 }
 
 const GalleryPage = async ({ params }: GalleryPageProps) => {
